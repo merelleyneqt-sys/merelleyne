@@ -7,7 +7,7 @@ Static one-page site: a playlist of Merelleyne's arrangements for sale. Plain HT
   (black/white, condensed high-contrast serif, small mono labels, red accent).
 - Fonts: Oranienbaum (serif, titles/buttons), IBM Plex Mono (meta). Accent red `#b3141c`.
 - UI text in English.
-- Cover: round picture-disc vinyl in a static round frame. Photo = `cover.jpg` next to index.html (not committed yet — user picks it); without it the disc shows the sigil. Disc spins (40s/turn) only while playing; light sheen stays still. All vinyl look is CSS layers, no image assets.
+- Cover: round picture-disc vinyl in a static round frame. Photo = `cover.jpg` next to index.html (800×800, user-chosen: red/black skull artwork); without it the disc shows the sigil. Disc spins (40s/turn) only while playing; light sheen stays still. All vinyl look is CSS layers, no image assets.
 
 ## Files
 - `index.html`, `style.css`, `app.js` — the site.
