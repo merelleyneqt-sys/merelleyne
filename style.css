@@ -124,7 +124,7 @@ body.playing .i-pause { display: inline; }
 }
 .title .arrow { color: var(--red); font-family: var(--mono); font-size: 11px; margin-left: 4px; opacity: 0; transition: opacity .2s; }
 .info:hover .arrow, .row.active .arrow { opacity: 1; }
-.meta { color: var(--mute); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; margin-top: 3px; }
+.meta { color: var(--mute); font-size: 10px; letter-spacing: .08em; margin-top: 3px; }
 
 .wave {
   display: flex; align-items: center; gap: 1px;

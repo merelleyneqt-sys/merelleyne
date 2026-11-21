@@ -21,4 +21,4 @@ Static one-page site: a playlist of Merelleyne's arrangements for sale. Plain HT
 ## Notes
 - Test tracks come from `/Volumes/HARD-DRIVE_1TB/Projects/Rendered Beats` (tagged MP3s from `Tales of Violence 27/Tag` + Ashfall).
 - Prices ($40) and buy links (`#`) and contact email are placeholders — payment method not decided yet.
-- Preview: `.claude/launch.json` → `site` (python http.server on 8765).
+- Preview: `python3 scripts/serve.py` (port 8765; supports Range requests — plain http.server breaks seeking and Safari audio). `.claude/launch.json` → `site`.
