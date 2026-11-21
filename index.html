@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Merelleyne — Arrangements</title>
+  <meta name="description" content="Original arrangements by Merelleyne. Listen and buy.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <main>
+    <header class="head">
+      <button class="cover" id="cover" aria-label="Play / pause">
+        <svg class="sigil" viewBox="0 0 100 100" aria-hidden="true">
+          <g fill="none" stroke="currentColor" stroke-width=".6">
+            <circle cx="50" cy="50" r="38" opacity=".35"/>
+            <path d="M50 8 L58 62 L50 92 L42 62 Z"/>
+            <path d="M14 34 L60 44 L86 66 L40 56 Z" opacity=".9"/>
+            <path d="M86 34 L40 44 L14 66 L60 56 Z" opacity=".9"/>
+          </g>
+        </svg>
+        <span class="cover-play" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path class="i-play" d="M8 5v14l11-7z"/><path class="i-pause" d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+        </span>
+      </button>
+
+      <h1 class="name">Merelleyne</h1>
+      <p class="sub" id="sub"><span>Arrangements</span><span class="dot">·</span><span>Vol. 01</span></p>
+    </header>
+
+    <ol class="list" id="list"></ol>
+
+    <footer class="foot">
+      <span>Tagged previews · full stems &amp; WAV on purchase</span>
+      <a href="mailto:hello@example.com">Contact&nbsp;↘</a>
+    </footer>
+  </main>
+
+  <audio id="audio" preload="none"></audio>
+  <script src="tracks.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+[
+  {"title": "Ashfall", "key": "Gm", "bpm": 135, "price": 40, "file": "ashfall.mp3", "buy": "#"},
+  {"title": "Nocturnal", "key": "F#m", "bpm": 118, "price": 40, "file": "nocturnal.mp3", "buy": "#"},
+  {"title": "METOL", "key": "", "bpm": 151, "price": 40, "file": "metol.mp3", "buy": "#"},
+  {"title": "Silent", "key": "", "bpm": 135, "price": 40, "file": "silent.mp3", "buy": "#"},
+  {"title": "Radiant Abyss", "key": "", "bpm": 125, "price": 40, "file": "radiant-abyss.mp3", "buy": "#"},
+  {"title": "Echoes", "key": "", "bpm": 95, "price": 40, "file": "echoes.mp3", "buy": "#"},
+  {"title": "Velvet Skies", "key": "", "bpm": 116, "price": 40, "file": "velvet-skies.mp3", "buy": "#"},
+  {"title": "Whispers in the Wind", "key": "", "bpm": 151, "price": 40, "file": "whispers-in-the-wind.mp3", "buy": "#"},
+  {"title": "Beyond the Horizon", "key": "", "bpm": 125, "price": 40, "file": "beyond-the-horizon.mp3", "buy": "#"},
+  {"title": "Celestial", "key": "", "bpm": 100, "price": 40, "file": "celestial.mp3", "buy": "#"}
+]
