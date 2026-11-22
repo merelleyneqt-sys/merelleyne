@@ -430,12 +430,12 @@ body.lang-swap [data-i18n], body.lang-swap [data-i18n-html], body.lang-swap .m-p
 .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
 .search {
   position: relative; display: flex; align-items: center; gap: 8px;
-  width: 220px; max-width: 100%;
+  width: 280px; max-width: 100%;   /* fixed width: doesn't change on focus */
   border-bottom: 1px solid rgba(236, 235, 231, .18);
   padding: 4px 0;
-  transition: border-color .2s, width .3s cubic-bezier(.2, .8, .2, 1);
+  transition: border-color .2s;
 }
-.search:focus-within { border-color: var(--ink); width: 280px; }
+.search:focus-within { border-color: var(--ink); }
 .search > svg { width: 14px; flex: none; fill: none; stroke: var(--mute); stroke-width: 1.6; stroke-linecap: round; transition: stroke .2s; }
 .search:focus-within > svg { stroke: var(--ink); }
 .search input {
@@ -504,7 +504,7 @@ body.has-player .toast { bottom: 118px; }
 @media (max-width: 760px) { body.has-player .toast { bottom: 168px; } }
 @media (max-width: 540px) {
   .lang { top: 10px; right: 10px; }
-  .search, .search:focus-within { width: 100%; }
+  .search { width: 100%; }
   .found { white-space: nowrap; }
 }
 
