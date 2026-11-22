@@ -7,7 +7,7 @@ _Last updated: 2026-11-22. Talk to the user in Russian, simply; site UI stays En
 - **Repo:** github.com/merelleyneqt-sys/merelleyne (public; user approved). `gh` is logged in as `merelleyneqt-sys` (token scopes: repo, gist, read:org — **no `workflow`**, so no GitHub Actions; deploy runs from this Mac via `scripts/deploy.sh`).
 - **Admin:** local only — double-click `Admin.command` → http://localhost:8765/admin/. Publish = commit + push main + deploy.
 
-## Not published yet (local only — user said "hold, write it to the handoff")
+## Earlier items (now published)
 - **Contact window clipboard hint** (`app.js`, `style.css`, `index.html` → `?v=6`): under the Telegram/Instagram/Email buttons a muted line now always says
   "Telegram & Instagram: the message is copied automatically on click — just paste it into the chat".
   After a click it briefly turns red: "Message copied — paste it into the chat (⌘V / long-press → Paste)", then returns to the hint.
@@ -20,10 +20,11 @@ _Last updated: 2026-11-22. Talk to the user in Russian, simply; site UI stays En
 - Fixed admin bug: saving a track with empty BPM crashed (`int(None)` in `serve.py write_tracks`).
 - `HANDOFF.md` itself is also only local.
 
-## Done locally in the last round (not published; checked in the browser pane — desktop + mobile, EN + RU)
+## Published 2026-11-22 (user: "publish as is", incl. the 19 untagged tracks)
 - **EN/RU switch** top-right (`EN / RU`, red dot on active). All texts in `i18n.js` (`en`/`ru`), Contact message/subject per language in `settings.js` (`{en, ru}` objects). First visit: RU if browser is Russian, else EN; choice saved. Oranienbaum and IBM Plex Mono both have Cyrillic (checked).
 - **Name → Links window**: click MERELLEYNE → Instagram, Telegram, YouTube (@merelleynehq), Email. SoundCloud/Spotify/TikTok slots in `settings.js` are empty (hidden) — ask the user for links if they have them.
-- **Search** above the list, left: underline input with magnifier, "N found", "Nothing found", ✕ to clear, `/` focuses it, Esc clears. Prev/next/shuffle follow the filtered list. `ё` = `е`.
+- **Row play button replaced by a download button** (tagged MP3, free). Row click still plays.
+- **Search** above the list (fixed width), left: underline input with magnifier, "N found", "Nothing found", ✕ to clear, `/` focuses it, Esc clears. Prev/next/shuffle follow the filtered list. `ё` = `е`.
 - **Rows show only duration** (key/BPM removed from the list; still in player, contact list and message).
 - **Right-click menu** on a track (long-press on phones): Play/Pause, Add/Remove selection, **Download tagged MP3 — Free** (downloads `audio/<file>` as `Merelleyne - Title (tagged).mp3`), Copy link (`site/#<file-slug>` → page scrolls to the track and loads it in the player, no autoplay). Toast "Link copied".
   - ⚠ The free download gives whatever is in `audio/` — for the 19 untagged test tracks that is the **full untagged version**.
