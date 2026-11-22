@@ -10,7 +10,7 @@ Static one-page site: a playlist of Merelleyne's arrangements for sale. Plain HT
 - Player: fixed bottom bar — left: now playing (title, key/BPM; slides in on track change), center: shuffle / prev / play / next / repeat off→all→one + seek line, right: volume (mute + slider, saved; hidden on phones). Slides up after first play. No waveforms.
 - No track numbers anywhere, no footer text.
 - Name MERELLEYNE is a button → "Links" window (Instagram / Telegram / YouTube / Email…), list in `settings.js` → `socials` (empty url = hidden). Red underline grows on hover.
-- Search above the list (fixed 280px width, no resize on focus; filters by title; player prev/next follow the filter). Rows show title + duration only. Row buttons: download (tagged MP3, free) + select; clicking the row itself plays.
+- Search above the list (fixed 280px width, no resize on focus; filters by title; player prev/next follow the filter). Rows show title + duration only. Row has only the select (+) button; clicking the row plays. Download is in the right-click menu.
 - Right-click / long-press menu on a track: play, select, free tagged MP3 download, copy link (`#<file-slug>` deep link).
 - Rows: hover = light bg + left marker + slight shift; whole row plays on click. Right side: play + select (+ / red ✓). Selection saved in localStorage. No prices on the site — sales go through Contact.
 - Contact: big button under the list (shows selected count) → window with an editable prepared message listing selected tracks; buttons Telegram / Instagram / Email. TG & IG can't reliably prefill, so the message is copied to clipboard first; Email uses mailto with body.
