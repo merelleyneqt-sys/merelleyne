@@ -41,7 +41,7 @@
   list.innerHTML = tracks.map((tr, i) => `
       <li class="row" data-i="${i}" id="t-${esc(slug(tr))}">
         <div class="info">
-          <div class="title">${esc(tr.title)}<span class="arrow">↘</span></div>
+          <div class="title">${esc(tr.title)}<span class="eq" aria-hidden="true"><i></i><i></i><i></i></span></div>
         </div>
         <div class="btns">
           <button class="sel" aria-pressed="false">${selIcon}</button>
