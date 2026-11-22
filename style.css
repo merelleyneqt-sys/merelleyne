@@ -134,10 +134,10 @@ body.playing .cover .i-pause, body.playing #toggle .i-pause { display: inline; }
 }
 
 /* shared press feedback */
-.ctl, .dl, .sel, .contact, .m-btn, .m-link, .cover { -webkit-tap-highlight-color: transparent; }
-.ctl:active, .dl:active, .sel:active, .m-btn:active { transform: scale(.88); }
+.ctl, .sel, .contact, .m-btn, .m-link, .cover { -webkit-tap-highlight-color: transparent; }
+.ctl:active, .sel:active, .m-btn:active { transform: scale(.88); }
 .contact:active { transform: scale(.96); }
-.ctl, .dl, .sel, .contact, .m-btn { transition: transform .12s ease, background .2s, color .2s, border-color .2s; }
+.ctl, .sel, .contact, .m-btn { transition: transform .12s ease, background .2s, color .2s, border-color .2s; }
 .cover { transition: transform .2s ease; }
 .cover:active { transform: scale(.97); }
 
@@ -186,15 +186,12 @@ body.playing .cover .i-pause, body.playing #toggle .i-pause { display: inline; }
 .meta { color: var(--mute); font-size: 10px; letter-spacing: .08em; margin-top: 3px; }
 
 .btns { display: flex; gap: 6px; }
-.dl, .sel {
+.sel {
   width: 30px; height: 30px;
   display: grid; place-items: center;
   border: 1px solid rgba(236, 235, 231, .22);
 }
-.dl:hover, .sel:hover { border-color: var(--ink); }
-.dl svg { width: 13px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; }
-.dl:hover svg { transform: translateY(1px); }
-.dl.done { background: var(--ink); color: #050505; border-color: var(--ink); }
+.sel:hover { border-color: var(--ink); }
 
 .sel svg { width: 13px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .sel .i-check { display: none; }
