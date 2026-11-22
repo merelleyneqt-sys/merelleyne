@@ -36,7 +36,7 @@
   const pick = v => (v && typeof v === "object") ? (v[lang] ?? v.en ?? "") : (v ?? "");   // settings value per language
 
   /* ================= list ================= */
-  const playIcon = '<svg viewBox="0 0 24 24"><path class="i-play" d="M8 5v14l11-7z"/><path class="i-pause" d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>';
+  const dlIcon = '<svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>';
   const selIcon = '<svg viewBox="0 0 24 24"><path class="i-plus" d="M12 5v14M5 12h14"/><path class="i-check" d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 
   list.innerHTML = tracks.map((tr, i) => `
@@ -46,7 +46,7 @@
           <div class="meta">${fmt(tr.duration)}</div>
         </div>
         <div class="btns">
-          <button class="play">${playIcon}</button>
+          <button class="dl">${dlIcon}</button>
           <button class="sel" aria-pressed="false">${selIcon}</button>
         </div>
       </li>`).join("");
@@ -148,6 +148,7 @@
     if (!row) return;
     const i = +row.dataset.i;
     if (e.target.closest(".sel")) return togglePick(i);
+    if (e.target.closest(".dl")) return download(i);
     toggle(i);
   });
 
@@ -387,6 +388,8 @@
     a.href = "audio/" + tr.file;
     a.download = `${S.artist || "Merelleyne"} - ${tr.title} (tagged).mp3`;
     document.body.appendChild(a); a.click(); a.remove();
+    const b = rows[i].querySelector(".dl");          // short "done" flash on the row button
+    b.classList.add("done"); setTimeout(() => b.classList.remove("done"), 700);
   }
   async function copyLink(i) {
     const url = location.href.split("#")[0] + "#" + slug(tracks[i]);
@@ -447,7 +450,8 @@
     document.querySelectorAll("[data-i18n-aria]").forEach(el => el.setAttribute("aria-label", t(el.dataset.i18nAria)));
     document.querySelectorAll("[data-i18n-ph]").forEach(el => el.setAttribute("placeholder", t(el.dataset.i18nPh)));
     rows.forEach((r, i) => {
-      r.querySelector(".play").setAttribute("aria-label", t("play", { t: tracks[i].title }));
+      r.querySelector(".dl").setAttribute("aria-label", t("download", { t: tracks[i].title }));
+      r.querySelector(".dl").title = t("menuDownload");
       r.querySelector(".sel").setAttribute("aria-label", t("select", { t: tracks[i].title }));
     });
     repeatLabel();
