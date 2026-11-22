@@ -27,6 +27,9 @@ Static one-page site: a playlist of Merelleyne's arrangements for sale. Plain HT
 - API (in serve.py, bound to 127.0.0.1, rejects foreign Origin): GET/POST `/api/tracks`, POST `/api/upload` (raw body + `X-Filename`), POST `/api/publish`.
 - Saving never deletes audio; Publish removes unused mp3s, git-commits audio/tracks.json/tracks.js/cover.jpg, pushes main, then runs `scripts/deploy.sh`.
 - `admin/` must NOT be deployed publicly (it's harmless without the API, but keep it out of the deploy).
+## Handoff
+- `HANDOFF.md` — current state, unpublished changes, open decisions. Read it first when resuming.
+
 ## Hosting
 - Live: https://merelleyneqt-sys.github.io/merelleyne/ (GitHub Pages, public repo github.com/merelleyneqt-sys/merelleyne — user approved public).
 - Pages serves the `gh-pages` branch = contents of `dist/` only (public files, no admin/scripts/notes). `scripts/deploy.sh` builds `dist/` (`build_dist.sh`, keeps `dist/.git`) and pushes it. Live ~1 min after.

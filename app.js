@@ -187,10 +187,14 @@
       ta.remove(); return ok;
     }
   }
+  // Default hint: tells people the message goes to the clipboard on click (TG/IG can't prefill reliably).
+  const copyNames = () => channels.filter(c => c.copy).map(c => c.name).join(" & ");
+  const hint = () => copyNames() ? `${copyNames()}: the message is copied automatically on click — just paste it into the chat` : "";
   function note(text) {
     mNote.textContent = text;
-    mNote.classList.add("show");
-    clearTimeout(note.t); note.t = setTimeout(() => mNote.classList.remove("show"), 4000);
+    mNote.classList.remove("show"); void mNote.offsetWidth; mNote.classList.add("show");
+    clearTimeout(note.t);
+    note.t = setTimeout(() => { mNote.classList.remove("show"); mNote.textContent = hint(); }, 4000);
   }
 
   const channels = [
@@ -208,7 +212,7 @@
   $("mBtns").addEventListener("click", async e => {
     const b = e.target.closest(".m-btn"); if (!b) return;
     const c = channels[+b.dataset.k], m = mMsg.value;
-    if (c.copy && await copy(m)) note("Message copied — paste it into the chat");
+    if (c.copy && await copy(m)) note("Message copied — paste it into the chat (⌘V / long-press → Paste)");
     window.open(c.href(m), c.name === "Email" ? "_self" : "_blank", "noopener");
   });
 
@@ -217,7 +221,9 @@
     $("mSub").textContent = n ? `${n} track${n > 1 ? "s" : ""} selected` : "No tracks selected";
     $("mClear").style.visibility = n ? "visible" : "hidden";
     mMsg.value = message();
+    clearTimeout(note.t);
     mNote.classList.remove("show");
+    mNote.textContent = hint();
     modal.classList.remove("closing");
     modal.hidden = false;
     document.body.style.overflow = "hidden";
