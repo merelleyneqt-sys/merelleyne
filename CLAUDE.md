@@ -27,6 +27,7 @@ Static one-page site: a playlist of Merelleyne's arrangements for sale. Plain HT
 - API (in serve.py, bound to 127.0.0.1, rejects foreign Origin): GET/POST `/api/tracks`, POST `/api/upload` (raw body + `X-Filename`), POST `/api/publish`.
 - Saving never deletes audio; Publish removes unused mp3s, then git-commits audio/tracks.json/tracks.js/cover.jpg and pushes if a remote exists (no hosting yet → commit only).
 - `admin/` must NOT be deployed publicly (it's harmless without the API, but keep it out of the deploy).
+- Sharing a test: `scripts/build_dist.sh` → `dist/` (public files only, gitignored) → drag to app.netlify.com/drop. Don't tunnel the local server: it would expose the admin API.
 - Manual way still works: put mp3 in `audio/`, edit `tracks.json`, run `python3 scripts/build_tracks.py`.
 
 ## Notes
