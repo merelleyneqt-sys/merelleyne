@@ -1,7 +1,7 @@
 [
+  {"title": "Faded", "key": "Gm", "bpm": 120, "file": "faded.mp3"},
   {"title": "Ashfall", "key": "Gm", "bpm": 135, "file": "ashfall.mp3"},
   {"title": "Nocturnal", "key": "F#m", "bpm": 118, "file": "nocturnal.mp3"},
-  {"title": "METOL", "key": "", "bpm": 151, "file": "metol.mp3"},
   {"title": "Silent", "key": "", "bpm": 135, "file": "silent.mp3"},
   {"title": "Radiant Abyss", "key": "", "bpm": 125, "file": "radiant-abyss.mp3"},
   {"title": "Echoes", "key": "", "bpm": 95, "file": "echoes.mp3"},
