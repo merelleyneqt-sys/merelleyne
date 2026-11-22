@@ -8,12 +8,12 @@ window.SETTINGS = {
 
   // Prepared Contact message, per site language. {list} is replaced with the selected tracks.
   messageWithTracks: {
-    en: "Hi! I'm interested in these arrangements:\n{list}\n\nCould you tell me about pricing and licensing?",
-    ru: "Привет! Меня интересуют эти аранжировки:\n{list}\n\nПодскажите, пожалуйста, по цене и лицензии?",
+    en: "Hi! I'm interested in these arrangements:\n{list}",
+    ru: "Привет! Меня интересуют эти аранжировки:\n{list}",
   },
   messageEmpty: {
-    en: "Hi! I'm interested in your arrangements. Could you tell me about pricing and licensing?",
-    ru: "Привет! Меня интересуют ваши аранжировки. Подскажите, пожалуйста, по цене и лицензии?",
+    en: "Hi! I'm interested in your arrangements.",
+    ru: "Привет! Меня интересуют ваши аранжировки.",
   },
   emailSubject: {
     en: "Arrangements inquiry",
