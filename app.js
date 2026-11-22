@@ -6,7 +6,7 @@
   const audio = $("audio"), list = $("list");
   const fill = $("fill"), seek = $("seek"), tCur = $("tCur"), tDur = $("tDur");
   const shuffleBtn = $("shuffle"), repeatBtn = $("repeat");
-  const pNow = $("pNow"), pTitle = $("pTitle"), pMeta = $("pMeta");
+  const pNow = $("pNow"), pTitle = $("pTitle");
   const muteBtn = $("mute"), vol = $("vol"), volFill = $("volFill");
   let cur = -1, shuffle = false, repeat = "off", seeking = false;
 
@@ -42,7 +42,6 @@
       <li class="row" data-i="${i}" id="t-${esc(slug(tr))}">
         <div class="info">
           <div class="title">${esc(tr.title)}<span class="arrow">↘</span></div>
-          <div class="meta">${fmt(tr.duration)}</div>
         </div>
         <div class="btns">
           <button class="sel" aria-pressed="false">${selIcon}</button>
@@ -105,8 +104,8 @@
 
   function nowPlaying() {
     const tr = tracks[cur];
-    pTitle.textContent = tr.title;
-    pMeta.textContent = desc(tr);
+    // title with key/BPM in brackets on the right: "Arcane (Bm · 142 BPM)"
+    pTitle.innerHTML = esc(tr.title) + (desc(tr) ? ` <span class="p-kb">(${esc(desc(tr))})</span>` : "");
     pNow.classList.remove("swap"); void pNow.offsetWidth; pNow.classList.add("swap"); // replay animation
   }
 
