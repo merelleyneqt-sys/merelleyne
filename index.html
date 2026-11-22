@@ -9,16 +9,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <!-- bump ?v= when css/js change so browsers (Safari) don't show a stale copy -->
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>
+  <div class="lang" id="lang" role="group" aria-label="Language" data-i18n-aria="language">
+    <button data-lang="en">EN</button><button data-lang="ru">RU</button>
+  </div>
   <div class="bg" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 
   <main>
     <header class="head">
       <!-- Vinyl: put your picture next to index.html as cover.jpg — it fills the disc. -->
-      <button class="cover" id="cover" aria-label="Play / pause">
+      <button class="cover" id="cover" aria-label="Play / pause" data-i18n-aria="playPause">
         <span class="disc">
           <img class="art" src="cover.jpg" alt="" onerror="this.closest('.cover').classList.add('no-art'); this.remove()">
           <svg class="sigil" viewBox="0 0 100 100" aria-hidden="true">
@@ -38,22 +41,34 @@
       </button>
 
       <h1 class="name">Merelleyne</h1>
-      <p class="sub"><span>Arrangements</span><span class="dot">·</span><span>Vol. 01</span></p>
+      <p class="sub" data-i18n="sub">Arrangements · Vol. 01</p>
     </header>
 
+    <div class="bar">
+      <label class="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg>
+        <input id="q" type="search" placeholder="Search" autocomplete="off" spellcheck="false" aria-label="Search tracks" data-i18n-ph="search" data-i18n-aria="searchLabel">
+        <button class="q-clear" id="qClear" type="button" aria-label="Clear search" data-i18n-aria="clearSearch" hidden>
+          <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </label>
+      <span class="found" id="found"></span>
+    </div>
+
     <ol class="list" id="list"></ol>
+    <p class="none" id="none" data-i18n="nothingFound" hidden>Nothing found</p>
 
     <div class="cta">
       <button class="contact" id="contactBtn">
-        <span>Contact</span><span class="count" id="selCount"></span><span class="arr">↘</span>
+        <span data-i18n="contact">Contact</span><span class="count" id="selCount"></span><span class="arr">↘</span>
       </button>
-      <p class="hint" id="hint">Select tracks with <b>+</b> to include them in your message</p>
+      <p class="hint" id="hint" data-i18n-html="hint">Select tracks with <b>+</b> to include them in your message</p>
     </div>
 
   </main>
 
   <!-- ---------- player ---------- -->
-  <div class="player" id="player" aria-label="Player">
+  <div class="player" id="player" aria-label="Player" data-i18n-aria="player">
     <div class="p-now" id="pNow">
       <div class="p-title" id="pTitle"></div>
       <div class="p-meta" id="pMeta"></div>
@@ -61,16 +76,16 @@
 
     <div class="p-center">
       <div class="ctrls">
-        <button class="ctl" id="shuffle" aria-label="Shuffle" aria-pressed="false">
+        <button class="ctl" id="shuffle" aria-label="Shuffle" data-i18n-aria="shuffle" aria-pressed="false">
           <svg viewBox="0 0 24 24"><path d="M3 7h3.5c2 0 3 1 4.3 3l2.4 4c1.3 2 2.3 3 4.3 3H21M17.5 4.5 21 7l-3.5 2.5M3 17h3.5c1.3 0 2.2-.4 3-1.2M13.5 8.2c.8-.8 1.7-1.2 3-1.2H21M17.5 14.5 21 17l-3.5 2.5"/></svg>
         </button>
-        <button class="ctl" id="prev" aria-label="Previous">
+        <button class="ctl" id="prev" aria-label="Previous" data-i18n-aria="prev">
           <svg viewBox="0 0 24 24"><path class="fill" d="M18 5v14L8 12zM6 5h2v14H6z"/></svg>
         </button>
-        <button class="ctl big" id="toggle" aria-label="Play / pause">
+        <button class="ctl big" id="toggle" aria-label="Play / pause" data-i18n-aria="playPause">
           <svg viewBox="0 0 24 24"><path class="fill i-play" d="M9 6.5v11l8.5-5.5z"/><path class="fill i-pause" d="M8 6h3v12H8zM13 6h3v12h-3z"/></svg>
         </button>
-        <button class="ctl" id="next" aria-label="Next">
+        <button class="ctl" id="next" aria-label="Next" data-i18n-aria="next">
           <svg viewBox="0 0 24 24"><path class="fill" d="M6 5v14l10-7zM16 5h2v14h-2z"/></svg>
         </button>
         <button class="ctl" id="repeat" aria-label="Repeat" data-mode="off">
@@ -102,24 +117,28 @@
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mSub" hidden>
     <div class="m-back" data-close></div>
     <div class="m-panel">
-      <button class="m-close" data-close aria-label="Close">
+      <button class="m-close" data-close aria-label="Close" data-i18n-aria="close">
         <svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg>
       </button>
       <p class="m-sub" id="mSub"></p>
       <ul class="m-list" id="mList"></ul>
       <textarea class="m-msg" id="mMsg" rows="7" spellcheck="false"></textarea>
       <div class="m-row">
-        <button class="m-link" id="mCopy">Copy message</button>
-        <button class="m-link" id="mClear">Clear selection</button>
+        <button class="m-link" id="mCopy" data-i18n="copyMessage">Copy message</button>
+        <button class="m-link" id="mClear" data-i18n="clearSelection">Clear selection</button>
       </div>
       <div class="m-btns" id="mBtns"></div>
       <p class="m-note" id="mNote"></p>
     </div>
   </div>
 
+  <!-- right-click / long-press menu -->
+  <div class="ctx" id="ctx" role="menu" hidden></div>
+
   <audio id="audio" preload="none"></audio>
-  <script src="settings.js?v=7"></script>
-  <script src="tracks.js?v=7"></script>
-  <script src="app.js?v=7"></script>
+  <script src="i18n.js?v=8"></script>
+  <script src="settings.js?v=8"></script>
+  <script src="tracks.js?v=8"></script>
+  <script src="app.js?v=8"></script>
 </body>
 </html>

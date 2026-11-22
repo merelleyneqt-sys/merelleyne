@@ -20,18 +20,12 @@ _Last updated: 2026-11-22. Talk to the user in Russian, simply; site UI stays En
 - Fixed admin bug: saving a track with empty BPM crashed (`int(None)` in `serve.py write_tracks`).
 - `HANDOFF.md` itself is also only local.
 
-## Next task — EN/RU language switch (planned, NOT started; user said "hold, just write it down")
-User wants a global language toggle: **English and Russian**, covering the whole site **including the Contact message**. Toggle goes in the **top-right corner**.
-Plan agreed so far (implement only when the user says go):
-- New `i18n.js` with all UI strings side by side `{ en: {...}, ru: {...} }` so the user can edit texts easily. Mark static elements in `index.html` with `data-i18n` / `data-i18n-html` / `data-i18n-aria`; `app.js` gets a `t(key)` helper and `applyLang()` (sets `<html lang>`, title, meta description, all marked texts, row aria-labels, repeat/mute labels, channel names, re-renders the contact window if open).
-- Strings to cover: header sub ("Arrangements · Vol. 01" → "Аранжировки · Том 01"), Contact ("Связаться"), hint under Contact, "Copy message"/"Clear selection" ("Скопировать"/"Очистить выбор"), "Selected · N"/"Nothing selected"/empty-list text ("Выбрано · N"/"Ничего не выбрано"/"Отметьте треки кнопкой + …"), clipboard hint and "copied" notes, Email button ("Почта"), player aria labels. Track titles and "BPM" stay as is. Admin stays English.
-- `settings.js`: `messageWithTracks`, `messageEmpty`, `emailSubject` become `{ en, ru }`. RU drafts:
-  - with tracks: "Привет! Меня интересуют эти аранжировки:\n{list}\n\nПодскажите, пожалуйста, по цене и лицензии?"
-  - empty: "Привет! Меня интересуют ваши аранжировки. Подскажите, пожалуйста, по цене и лицензии?"
-  - subject: "Запрос по аранжировкам"
-- Toggle UI: fixed top-right, mono 10.5px "EN / RU", active = ink (+ small red dot), inactive = muted; soft fade on switched texts. Remember choice in localStorage; first visit → Russian if browser language is ru, else English.
-- **Check first:** does Oranienbaum (serif) have Cyrillic? A quick check of Google Fonts CSS was inconclusive. If not, pick a close Cyrillic condensed serif for RU or keep the serif for Latin only. IBM Plex Mono has Cyrillic.
-- Bump `?v=` to 8. Keep everything local/unpublished until the user says publish.
+## Done locally in the last round (not published, not visually checked — pane blocked)
+- **EN/RU switch** top-right (`EN / RU`, red dot on active). All texts in `i18n.js` (`en`/`ru`), Contact message/subject per language in `settings.js` (`{en, ru}` objects). First visit: RU if browser is Russian, else EN; choice saved. Oranienbaum and IBM Plex Mono both have Cyrillic (checked).
+- **Search** above the list, left: underline input with magnifier, "N found", "Nothing found", ✕ to clear, `/` focuses it, Esc clears. Prev/next/shuffle follow the filtered list. `ё` = `е`.
+- **Rows show only duration** (key/BPM removed from the list; still in player, contact list and message).
+- **Right-click menu** on a track (long-press on phones): Play/Pause, Add/Remove selection, **Download tagged MP3 — Free** (downloads `audio/<file>` as `Merelleyne - Title (tagged).mp3`), Copy link (`site/#<file-slug>` → page scrolls to the track and loads it in the player, no autoplay). Toast "Link copied".
+  - ⚠ The free download gives whatever is in `audio/` — for the 19 untagged test tracks that is the **full untagged version**.
 
 ## Known issues / gotchas
 - The built-in Browser pane is blocked by a leftover **t.me popup** (opened when the user tested the Telegram button). Navigation/JS in the pane refuse until the user closes it. Safari (`open -a Safari <url>`) works meanwhile.
