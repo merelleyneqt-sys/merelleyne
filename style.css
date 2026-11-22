@@ -151,7 +151,7 @@ body.playing .cover .i-pause, body.playing #toggle .i-pause { display: inline; }
 .row {
   position: relative;
   display: grid;
-  grid-template-columns: 22px 1fr auto;
+  grid-template-columns: 1fr auto;
   align-items: center;
   gap: 12px;
   height: 58px;
@@ -172,12 +172,9 @@ body.playing .cover .i-pause, body.playing #toggle .i-pause { display: inline; }
 .row.active::after { height: 100%; background: var(--red); }
 .row.active { background: rgba(179, 20, 28, .06); }
 
-.idx { color: var(--mute); font-size: 10.5px; transition: color .25s; }
-.row:hover .idx { color: var(--ink); }
-.row.active .idx { color: var(--red); }
-
 .info { min-width: 0; transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
 .row:hover .info { transform: translateX(4px); }
+.row.active .title { color: #fff; }
 .title {
   font-family: var(--serif);
   font-size: 21px;
@@ -228,13 +225,6 @@ body.playing .cover .i-pause, body.playing #toggle .i-pause { display: inline; }
 .hint { margin-top: 10px; color: var(--mute); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
 .hint b { color: var(--ink); font-weight: 500; }
 
-/* ---------- footer ---------- */
-.foot {
-  margin-top: 30px; text-align: center;
-  color: var(--mute);
-  font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
-}
-
 /* ---------- player (slides up after first play) ---------- */
 body.has-player main { padding-bottom: 120px; }
 .player {
@@ -254,7 +244,6 @@ body.has-player .player { transform: none; }
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .p-meta { color: var(--mute); font-size: 10px; letter-spacing: .08em; margin-top: 3px; white-space: nowrap; }
-.p-meta .red { color: var(--red); }
 .p-now.swap { animation: swap .45s cubic-bezier(.2, .8, .2, 1); }
 @keyframes swap { from { opacity: 0; transform: translateY(8px); } }
 
@@ -375,7 +364,7 @@ body.playing .ctl.big .i-pause, .ctl.big .i-play { animation: icon-in .2s ease; 
   main { padding-top: 40px; }
   .cover { --size: 160px; }
   .name { font-size: 38px; }
-  .row { grid-template-columns: 20px 1fr auto; gap: 10px; padding: 0 12px; }
+  .row { gap: 10px; padding: 0 12px; }
   .row + .row::before { left: 12px; right: 12px; }
   .ctrls { gap: 18px; }
   .title { font-size: 19px; }

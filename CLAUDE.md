@@ -7,7 +7,8 @@ Static one-page site: a playlist of Merelleyne's arrangements for sale. Plain HT
   (black/white, condensed high-contrast serif, small mono labels, red accent).
 - Fonts: Oranienbaum (serif, titles/buttons), IBM Plex Mono (meta). Accent red `#b3141c`.
 - UI text in English.
-- Player: fixed bottom bar — left: now playing (title, NN/total, key/BPM; slides in on track change), center: shuffle / prev / play / next / repeat off→all→one + seek line, right: volume (mute + slider, saved; hidden on phones). Slides up after first play. No waveforms.
+- Player: fixed bottom bar — left: now playing (title, key/BPM; slides in on track change), center: shuffle / prev / play / next / repeat off→all→one + seek line, right: volume (mute + slider, saved; hidden on phones). Slides up after first play. No waveforms.
+- No track numbers anywhere, no footer text.
 - Rows: hover = light bg + left marker + slight shift; whole row plays on click. Right side: play + select (+ / red ✓). Selection saved in localStorage. No prices on the site — sales go through Contact.
 - Contact: big button under the list (shows selected count) → window with an editable prepared message listing selected tracks; buttons Telegram / Instagram / Email. TG & IG can't reliably prefill, so the message is copied to clipboard first; Email uses mailto with body.
 - Perf: no backdrop-filter on list/player (caused stripes + stutter in Safari over the fixed grain); bg/grain on their own layers.

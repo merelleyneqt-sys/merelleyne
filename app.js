@@ -19,7 +19,6 @@
     s = Math.max(0, Math.floor(s || 0));
     return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
   };
-  const pad = n => String(n).padStart(2, "0");
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const dur = () => audio.duration || (cur >= 0 ? tracks[cur].duration : 0);
   const desc = t => [t.key, t.bpm && `${t.bpm} BPM`].filter(Boolean).join(" · ");
@@ -29,7 +28,6 @@
 
   list.innerHTML = tracks.map((t, i) => `
       <li class="row" data-i="${i}">
-        <span class="idx">${pad(i + 1)}</span>
         <div class="info">
           <div class="title">${esc(t.title)}<span class="arrow">↘</span></div>
           <div class="meta">${esc([desc(t), fmt(t.duration)].filter(Boolean).join(" · "))}</div>
@@ -70,7 +68,7 @@
   function nowPlaying() {
     const t = tracks[cur];
     pTitle.textContent = t.title;
-    pMeta.innerHTML = `<span class="red">${pad(cur + 1)}/${pad(tracks.length)}</span>${desc(t) ? " · " + esc(desc(t)) : ""}`;
+    pMeta.textContent = desc(t);
     pNow.classList.remove("swap"); void pNow.offsetWidth; pNow.classList.add("swap"); // replay animation
   }
 
