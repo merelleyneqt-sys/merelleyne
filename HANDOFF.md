@@ -20,7 +20,7 @@ _Last updated: 2026-11-22. Talk to the user in Russian, simply; site UI stays En
 - Fixed admin bug: saving a track with empty BPM crashed (`int(None)` in `serve.py write_tracks`).
 - `HANDOFF.md` itself is also only local.
 
-## Done locally in the last round (not published, not visually checked — pane blocked)
+## Done locally in the last round (not published; checked in the browser pane — desktop + mobile, EN + RU)
 - **EN/RU switch** top-right (`EN / RU`, red dot on active). All texts in `i18n.js` (`en`/`ru`), Contact message/subject per language in `settings.js` (`{en, ru}` objects). First visit: RU if browser is Russian, else EN; choice saved. Oranienbaum and IBM Plex Mono both have Cyrillic (checked).
 - **Search** above the list, left: underline input with magnifier, "N found", "Nothing found", ✕ to clear, `/` focuses it, Esc clears. Prev/next/shuffle follow the filtered list. `ё` = `е`.
 - **Rows show only duration** (key/BPM removed from the list; still in player, contact list and message).
@@ -35,7 +35,7 @@ _Last updated: 2026-11-22. Talk to the user in Russian, simply; site UI stays En
 - Also hide/disable "Download tagged MP3" for sold tracks? Ask the user.
 
 ## Known issues / gotchas
-- The built-in Browser pane is blocked by a leftover **t.me popup** (opened when the user tested the Telegram button). Navigation/JS in the pane refuse until the user closes it. Safari (`open -a Safari <url>`) works meanwhile.
+- If the user tests Telegram/Instagram buttons in the built-in Browser pane, the opened popup blocks the pane until the user closes it.
 - A stale terminal tab "GitHub login" (c1) is still open; the user typed in it, so only the user can close it.
 - External drive `/Volumes/HARD-DRIVE_1TB` (source beats) was **disconnected** at last check.
 - Safari caches hard → always bump `?v=` in `index.html` when css/js change.
