@@ -20,6 +20,18 @@ window.SETTINGS = {
     ru: "Запрос по аранжировкам",
   },
 
+  // Links window (opens when you click the name MERELLEYNE). Order = order on the site.
+  // Leave url empty ("") to hide a line. handle is the small grey text on the right.
+  socials: [
+    { name: "Instagram",  url: "https://www.instagram.com/merelleynehq", handle: "@merelleynehq" },
+    { name: "Telegram",   url: "https://t.me/merelleyneqt",              handle: "@merelleyneqt" },
+    { name: "YouTube",    url: "https://www.youtube.com/@merelleynehq",  handle: "@merelleynehq" },
+    { name: "SoundCloud", url: "", handle: "" },
+    { name: "Spotify",    url: "", handle: "" },
+    { name: "TikTok",     url: "", handle: "" },
+    { name: "Email",      url: "mailto:merelleynehq@gmail.com",          handle: "merelleynehq@gmail.com" },
+  ],
+
   // Name used for free tagged downloads: "<artist> - <title> (tagged).mp3"
   artist: "Merelleyne",
 };

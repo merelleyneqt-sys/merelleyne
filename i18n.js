@@ -48,6 +48,8 @@ window.I18N = {
     mute: "Mute",
     unmute: "Unmute",
     language: "Language",
+    links: "Links",
+    openLinks: "Open links",
   },
 
   ru: {
@@ -94,5 +96,7 @@ window.I18N = {
     mute: "Выключить звук",
     unmute: "Включить звук",
     language: "Язык",
+    links: "Ссылки",
+    openLinks: "Открыть ссылки",
   },
 };

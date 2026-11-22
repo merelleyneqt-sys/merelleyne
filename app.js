@@ -314,6 +314,30 @@
   $("mCopy").addEventListener("click", async () => { if (await copy(mMsg.value)) note(t("copied")); });
   $("mClear").addEventListener("click", () => { picked.clear(); renderPicked(false); fillModal(); });
 
+  /* ================= links window (click the name) ================= */
+  const links = $("links");
+  const socials = (S.socials || []).filter(x => x && x.url);
+  const renderLinks = () => $("lList").innerHTML = socials.map((x, k) => {
+    const ext = !/^mailto:/i.test(x.url);
+    return `<li style="animation-delay:${60 + k * 45}ms"><a class="l-item" href="${esc(x.url)}"${ext ? ' target="_blank" rel="noopener"' : ""}>` +
+      `<span class="n">${esc(/^e-?mail$/i.test(x.name) ? t("email") : x.name)}</span><span class="h">${esc(x.handle || "")}</span><span class="a">↗</span></a></li>`;
+  }).join("");
+  if (!socials.length) $("nameBtn").disabled = true;
+  function openLinks() {
+    closeMenu();
+    links.classList.remove("closing");
+    links.hidden = false;
+    document.body.style.overflow = "hidden";
+    links.querySelector(".l-item")?.focus({ preventScroll: true });
+  }
+  function closeLinks() {
+    if (links.hidden || links.classList.contains("closing")) return;
+    links.classList.add("closing");
+    setTimeout(() => { links.hidden = true; links.classList.remove("closing"); document.body.style.overflow = ""; }, 200);
+  }
+  $("nameBtn").addEventListener("click", openLinks);
+  links.addEventListener("click", e => { if (e.target.closest("[data-close]")) closeLinks(); });
+
   /* ================= right-click / long-press menu ================= */
   const ctx = $("ctx");
   const ico = {
@@ -406,8 +430,8 @@
 
   /* ================= keyboard ================= */
   document.addEventListener("keydown", e => {
-    if (e.key === "Escape") { if (!ctx.hidden) return closeMenu(); return closeModal(); }
-    if (!modal.hidden || !ctx.hidden || e.target.closest("button, a, input, textarea")) return;
+    if (e.key === "Escape") { if (!ctx.hidden) return closeMenu(); closeLinks(); return closeModal(); }
+    if (!modal.hidden || !links.hidden || !ctx.hidden || e.target.closest("button, a, input, textarea")) return;
     if (e.key === "/") { e.preventDefault(); q.focus(); return; }
     if (e.code === "Space") { e.preventDefault(); toggle(cur < 0 ? (visible()[0] ?? 0) : cur); }
   });
@@ -429,6 +453,7 @@
     repeatLabel();
     muteBtn.setAttribute("aria-label", t(volume === 0 ? "unmute" : "mute"));
     renderChannels();
+    renderLinks();
     filter();
     if (!modal.hidden) fillModal();
     closeMenu();

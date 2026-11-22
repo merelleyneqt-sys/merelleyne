@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <!-- bump ?v= when css/js change so browsers (Safari) don't show a stale copy -->
-  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
   <div class="lang" id="lang" role="group" aria-label="Language" data-i18n-aria="language">
@@ -40,7 +40,7 @@
         </span>
       </button>
 
-      <h1 class="name">Merelleyne</h1>
+      <h1 class="name"><button id="nameBtn" aria-haspopup="dialog" data-i18n-aria="openLinks">Merelleyne</button></h1>
       <p class="sub" data-i18n="sub">Arrangements · Vol. 01</p>
     </header>
 
@@ -132,13 +132,25 @@
     </div>
   </div>
 
+  <!-- ---------- links window (click the name) ---------- -->
+  <div class="modal" id="links" role="dialog" aria-modal="true" aria-labelledby="lTitle" hidden>
+    <div class="m-back" data-close></div>
+    <div class="m-panel l-panel">
+      <button class="m-close" data-close aria-label="Close" data-i18n-aria="close">
+        <svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg>
+      </button>
+      <p class="m-sub" id="lTitle" data-i18n="links">Links</p>
+      <ul class="l-list" id="lList"></ul>
+    </div>
+  </div>
+
   <!-- right-click / long-press menu -->
   <div class="ctx" id="ctx" role="menu" hidden></div>
 
   <audio id="audio" preload="none"></audio>
-  <script src="i18n.js?v=9"></script>
-  <script src="settings.js?v=9"></script>
-  <script src="tracks.js?v=9"></script>
-  <script src="app.js?v=9"></script>
+  <script src="i18n.js?v=10"></script>
+  <script src="settings.js?v=10"></script>
+  <script src="tracks.js?v=10"></script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>

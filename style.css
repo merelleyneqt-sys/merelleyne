@@ -507,3 +507,33 @@ body.has-player .toast { bottom: 118px; }
   .search, .search:focus-within { width: 100%; }
   .found { white-space: nowrap; }
 }
+
+/* ---------- name → links window ---------- */
+.name button {
+  position: relative; font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit;
+  padding: 0 2px;
+}
+.name button::after { /* thin red line grows on hover */
+  content: ""; position: absolute; left: 50%; right: 50%; bottom: -6px; height: 1px; background: var(--red);
+  transition: left .35s cubic-bezier(.2, .8, .2, 1), right .35s cubic-bezier(.2, .8, .2, 1);
+}
+.name button:hover::after, .name button:focus-visible::after { left: 0; right: 0; }
+.name button:active { transform: scale(.98); }
+.name button:focus-visible { outline: none; }
+
+.l-panel { max-width: 380px; }
+.l-list { list-style: none; margin-top: 14px; border-top: 1px solid var(--line); text-align: left; }
+.l-list li { border-bottom: 1px solid var(--line); animation: lin .4s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes lin { from { opacity: 0; transform: translateY(6px); } }
+.l-item {
+  position: relative; display: grid; grid-template-columns: 1fr auto 18px; align-items: baseline; gap: 12px;
+  padding: 13px 4px 11px 12px; outline: none;
+  transition: background .2s, padding .3s cubic-bezier(.2, .8, .2, 1);
+}
+.l-item::before { content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 2px; background: var(--red); transform: scaleY(0); transition: transform .2s; }
+.l-item:hover, .l-item:focus-visible { background: rgba(236, 235, 231, .05); padding-left: 16px; }
+.l-item:hover::before, .l-item:focus-visible::before { transform: none; }
+.l-item .n { font: 24px/1 var(--serif); text-transform: uppercase; }
+.l-item .h { color: var(--mute); font-size: 10px; letter-spacing: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px; }
+.l-item .a { color: var(--red); font-size: 13px; text-align: right; transition: transform .25s; }
+.l-item:hover .a { transform: translate(2px, -2px); }

@@ -22,6 +22,7 @@ _Last updated: 2026-11-22. Talk to the user in Russian, simply; site UI stays En
 
 ## Done locally in the last round (not published; checked in the browser pane — desktop + mobile, EN + RU)
 - **EN/RU switch** top-right (`EN / RU`, red dot on active). All texts in `i18n.js` (`en`/`ru`), Contact message/subject per language in `settings.js` (`{en, ru}` objects). First visit: RU if browser is Russian, else EN; choice saved. Oranienbaum and IBM Plex Mono both have Cyrillic (checked).
+- **Name → Links window**: click MERELLEYNE → Instagram, Telegram, YouTube (@merelleynehq), Email. SoundCloud/Spotify/TikTok slots in `settings.js` are empty (hidden) — ask the user for links if they have them.
 - **Search** above the list, left: underline input with magnifier, "N found", "Nothing found", ✕ to clear, `/` focuses it, Esc clears. Prev/next/shuffle follow the filtered list. `ё` = `е`.
 - **Rows show only duration** (key/BPM removed from the list; still in player, contact list and message).
 - **Right-click menu** on a track (long-press on phones): Play/Pause, Add/Remove selection, **Download tagged MP3 — Free** (downloads `audio/<file>` as `Merelleyne - Title (tagged).mp3`), Copy link (`site/#<file-slug>` → page scrolls to the track and loads it in the player, no autoplay). Toast "Link copied".

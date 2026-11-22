@@ -9,6 +9,7 @@ Static one-page site: a playlist of Merelleyne's arrangements for sale. Plain HT
 - UI in English and Russian (switch top-right). Texts live in `i18n.js`; contact message per language in `settings.js`. Admin stays English.
 - Player: fixed bottom bar — left: now playing (title, key/BPM; slides in on track change), center: shuffle / prev / play / next / repeat off→all→one + seek line, right: volume (mute + slider, saved; hidden on phones). Slides up after first play. No waveforms.
 - No track numbers anywhere, no footer text.
+- Name MERELLEYNE is a button → "Links" window (Instagram / Telegram / YouTube / Email…), list in `settings.js` → `socials` (empty url = hidden). Red underline grows on hover.
 - Search above the list (filters by title; player prev/next follow the filter). Rows show title + duration only.
 - Right-click / long-press menu on a track: play, select, free tagged MP3 download, copy link (`#<file-slug>` deep link).
 - Rows: hover = light bg + left marker + slight shift; whole row plays on click. Right side: play + select (+ / red ✓). Selection saved in localStorage. No prices on the site — sales go through Contact.
