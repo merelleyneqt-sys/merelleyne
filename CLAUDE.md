@@ -25,9 +25,13 @@ Static one-page site: a playlist of Merelleyne's arrangements for sale. Plain HT
 - User chose: admin runs only on this Mac, no online login. Double-click `Admin.command` → starts `scripts/serve.py` and opens http://localhost:8765/admin/.
 - Admin page `admin/index.html`: drop MP3/WAV/AIFF/FLAC → server converts to 160k MP3 in `audio/`, guesses title/key/BPM from the filename (`Name (Gm_135BPM)`, `Name (125BPM)`, `NAME_151`), new track goes on top. Edit title/key/BPM inline (autosave), reorder ↑↓, delete.
 - API (in serve.py, bound to 127.0.0.1, rejects foreign Origin): GET/POST `/api/tracks`, POST `/api/upload` (raw body + `X-Filename`), POST `/api/publish`.
-- Saving never deletes audio; Publish removes unused mp3s, then git-commits audio/tracks.json/tracks.js/cover.jpg and pushes if a remote exists (no hosting yet → commit only).
+- Saving never deletes audio; Publish removes unused mp3s, git-commits audio/tracks.json/tracks.js/cover.jpg, pushes main, then runs `scripts/deploy.sh`.
 - `admin/` must NOT be deployed publicly (it's harmless without the API, but keep it out of the deploy).
-- Sharing a test: `scripts/build_dist.sh` → `dist/` (public files only, gitignored) → drag to app.netlify.com/drop. Don't tunnel the local server: it would expose the admin API.
+## Hosting
+- Live: https://merelleyneqt-sys.github.io/merelleyne/ (GitHub Pages, public repo github.com/merelleyneqt-sys/merelleyne — user approved public).
+- Pages serves the `gh-pages` branch = contents of `dist/` only (public files, no admin/scripts/notes). `scripts/deploy.sh` builds `dist/` (`build_dist.sh`, keeps `dist/.git`) and pushes it. Live ~1 min after.
+- No GitHub Actions: the gh login token has no `workflow` scope, so deploy happens from this Mac.
+- Don't tunnel the local server: it would expose the admin API.
 - Manual way still works: put mp3 in `audio/`, edit `tracks.json`, run `python3 scripts/build_tracks.py`.
 
 ## Notes
