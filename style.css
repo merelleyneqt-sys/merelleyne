@@ -183,7 +183,6 @@ body.playing .cover .i-pause, body.playing #toggle .i-pause { display: inline; }
 }
 .title .arrow { color: var(--red); font-family: var(--mono); font-size: 11px; margin-left: 4px; opacity: 0; transition: opacity .2s; }
 .row:hover .arrow, .row.active .arrow { opacity: 1; }
-.meta { color: var(--mute); font-size: 10px; letter-spacing: .08em; margin-top: 3px; }
 
 .btns { display: flex; gap: 6px; }
 .sel {
@@ -238,7 +237,7 @@ body.has-player .player { transform: none; }
   font-family: var(--serif); font-size: 21px; line-height: 1.1;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.p-meta { color: var(--mute); font-size: 10px; letter-spacing: .08em; margin-top: 3px; white-space: nowrap; }
+.p-kb { font: 10.5px var(--mono); color: var(--mute); letter-spacing: .06em; margin-left: 6px; vertical-align: 3px; }
 .p-now.swap { animation: swap .45s cubic-bezier(.2, .8, .2, 1); }
 @keyframes swap { from { opacity: 0; transform: translateY(8px); } }
 
