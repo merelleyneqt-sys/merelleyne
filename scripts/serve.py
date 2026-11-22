@@ -194,7 +194,12 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         _, remotes = git("remote")
         if remotes.strip():
             code, out = git("push")
-            msg += " Pushed online." if code == 0 else " Push failed: " + out[-300:]
+            if code != 0:
+                return self.send_json({"error": "Push failed: " + out[-300:]}, 500)
+            r = subprocess.run(["bash", str(ROOT / "scripts" / "deploy.sh")], cwd=ROOT, capture_output=True, text=True)
+            if r.returncode != 0:
+                return self.send_json({"error": "Deploy failed: " + (r.stdout + r.stderr)[-300:]}, 500)
+            msg += " Site is updating — live in about a minute."
         else:
             msg += " (Not online yet — hosting isn't connected.)"
         self.send_json({"message": msg})
