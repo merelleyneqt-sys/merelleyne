@@ -13,6 +13,8 @@ _Last updated: 2026-11-22. Talk to the user in Russian, simply; site UI stays En
   After a click it briefly turns red: "Message copied — paste it into the chat (⌘V / long-press → Paste)", then returns to the hint.
   - Committed locally, **not pushed, not deployed**. Not checked visually yet (browser pane was blocked, see below).
   - To ship: check it in the browser, then `git push && bash scripts/deploy.sh` (or press Publish in the admin).
+- **Contact window: title "Get in touch" removed** (`?v=7`). Top now shows a small "Selected · N" label and a scrollable list (max ~4 rows visible) of selected tracks — serif title, key/BPM, red left marker, ✕ to deselect (updates the message). Empty state: "Pick tracks with + to list them here".
+  - Committed locally, **not pushed/deployed, not visually checked** (pane blocked; headless Brave screenshot hung).
 - `HANDOFF.md` itself is also only local.
 
 ## Known issues / gotchas

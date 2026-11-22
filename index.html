@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <!-- bump ?v= when css/js change so browsers (Safari) don't show a stale copy -->
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
   <div class="bg" aria-hidden="true"></div>
@@ -99,14 +99,14 @@
   </div>
 
   <!-- ---------- contact window ---------- -->
-  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" hidden>
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mSub" hidden>
     <div class="m-back" data-close></div>
     <div class="m-panel">
       <button class="m-close" data-close aria-label="Close">
         <svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg>
       </button>
-      <h2 class="m-title" id="mTitle">Get in touch</h2>
       <p class="m-sub" id="mSub"></p>
+      <ul class="m-list" id="mList"></ul>
       <textarea class="m-msg" id="mMsg" rows="7" spellcheck="false"></textarea>
       <div class="m-row">
         <button class="m-link" id="mCopy">Copy message</button>
@@ -118,8 +118,8 @@
   </div>
 
   <audio id="audio" preload="none"></audio>
-  <script src="settings.js?v=6"></script>
-  <script src="tracks.js?v=6"></script>
-  <script src="app.js?v=6"></script>
+  <script src="settings.js?v=7"></script>
+  <script src="tracks.js?v=7"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>

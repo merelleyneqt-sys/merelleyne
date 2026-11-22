@@ -216,9 +216,27 @@
     window.open(c.href(m), c.name === "Email" ? "_self" : "_blank", "noopener");
   });
 
+  function renderModalList() {
+    const sel = tracks.filter(t => picked.has(t.file));
+    const n = sel.length;
+    $("mSub").textContent = n ? `Selected · ${n}` : "Nothing selected";
+    $("mList").innerHTML = n
+      ? sel.map(t => `<li class="m-item"><span class="n">${esc(t.title)}</span><span class="k">${esc(desc(t))}</span>` +
+          `<button class="m-x" data-file="${esc(t.file)}" aria-label="Remove ${esc(t.title)}"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></li>`).join("")
+      : `<li class="m-empty">Pick tracks with <b>+</b> to list them here</li>`;
+  }
+  $("mList").addEventListener("click", e => {
+    const x = e.target.closest(".m-x"); if (!x) return;
+    picked.delete(x.dataset.file);
+    renderPicked(false);
+    renderModalList();
+    $("mClear").style.visibility = picked.size ? "visible" : "hidden";
+    mMsg.value = message();
+  });
+
   function openModal() {
     const n = picked.size;
-    $("mSub").textContent = n ? `${n} track${n > 1 ? "s" : ""} selected` : "No tracks selected";
+    renderModalList();
     $("mClear").style.visibility = n ? "visible" : "hidden";
     mMsg.value = message();
     clearTimeout(note.t);
