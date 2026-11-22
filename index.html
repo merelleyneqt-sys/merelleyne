@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Merelleyne — Arrangements</title>
+  <meta name="description" content="Original arrangements by Merelleyne. Listen, pick, get in touch.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- bump ?v= when css/js change so browsers (Safari) don't show a stale copy -->
+  <link rel="stylesheet" href="style.css?v=5">
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <main>
+    <header class="head">
+      <!-- Vinyl: put your picture next to index.html as cover.jpg — it fills the disc. -->
+      <button class="cover" id="cover" aria-label="Play / pause">
+        <span class="disc">
+          <img class="art" src="cover.jpg" alt="" onerror="this.closest('.cover').classList.add('no-art'); this.remove()">
+          <svg class="sigil" viewBox="0 0 100 100" aria-hidden="true">
+            <g fill="none" stroke="currentColor" stroke-width=".8">
+              <path d="M50 8 L58 62 L50 92 L42 62 Z"/>
+              <path d="M14 34 L60 44 L86 66 L40 56 Z"/>
+              <path d="M86 34 L40 44 L14 66 L60 56 Z"/>
+            </g>
+          </svg>
+          <span class="grooves"></span>
+          <span class="hole"></span>
+        </span>
+        <span class="sheen" aria-hidden="true"></span>
+        <span class="cover-play" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path class="i-play" d="M8 5v14l11-7z"/><path class="i-pause" d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+        </span>
+      </button>
+
+      <h1 class="name">Merelleyne</h1>
+      <p class="sub"><span>Arrangements</span><span class="dot">·</span><span>Vol. 01</span></p>
+    </header>
+
+    <ol class="list" id="list"></ol>
+
+    <div class="cta">
+      <button class="contact" id="contactBtn">
+        <span>Contact</span><span class="count" id="selCount"></span><span class="arr">↘</span>
+      </button>
+      <p class="hint" id="hint">Select tracks with <b>+</b> to include them in your message</p>
+    </div>
+
+  </main>
+
+  <!-- ---------- player ---------- -->
+  <div class="player" id="player" aria-label="Player">
+    <div class="p-now" id="pNow">
+      <div class="p-title" id="pTitle"></div>
+      <div class="p-meta" id="pMeta"></div>
+    </div>
+
+    <div class="p-center">
+      <div class="ctrls">
+        <button class="ctl" id="shuffle" aria-label="Shuffle" aria-pressed="false">
+          <svg viewBox="0 0 24 24"><path d="M3 7h3.5c2 0 3 1 4.3 3l2.4 4c1.3 2 2.3 3 4.3 3H21M17.5 4.5 21 7l-3.5 2.5M3 17h3.5c1.3 0 2.2-.4 3-1.2M13.5 8.2c.8-.8 1.7-1.2 3-1.2H21M17.5 14.5 21 17l-3.5 2.5"/></svg>
+        </button>
+        <button class="ctl" id="prev" aria-label="Previous">
+          <svg viewBox="0 0 24 24"><path class="fill" d="M18 5v14L8 12zM6 5h2v14H6z"/></svg>
+        </button>
+        <button class="ctl big" id="toggle" aria-label="Play / pause">
+          <svg viewBox="0 0 24 24"><path class="fill i-play" d="M9 6.5v11l8.5-5.5z"/><path class="fill i-pause" d="M8 6h3v12H8zM13 6h3v12h-3z"/></svg>
+        </button>
+        <button class="ctl" id="next" aria-label="Next">
+          <svg viewBox="0 0 24 24"><path class="fill" d="M6 5v14l10-7zM16 5h2v14h-2z"/></svg>
+        </button>
+        <button class="ctl" id="repeat" aria-label="Repeat" data-mode="off">
+          <svg viewBox="0 0 24 24"><path d="M4 11V9.5A2.5 2.5 0 0 1 6.5 7H19M16 4l3 3-3 3M20 13v1.5a2.5 2.5 0 0 1-2.5 2.5H5M8 20l-3-3 3-3"/></svg>
+          <span class="one">1</span>
+        </button>
+      </div>
+      <div class="seek">
+        <span class="t" id="tCur">0:00</span>
+        <div class="slider" id="seek"><div class="fillbar" id="fill"><i></i></div></div>
+        <span class="t" id="tDur">0:00</span>
+      </div>
+    </div>
+
+    <div class="p-vol">
+      <button class="ctl" id="mute" aria-label="Mute">
+        <svg viewBox="0 0 24 24">
+          <path class="fill" d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/>
+          <path class="w1" d="M15 9.5a3.5 3.5 0 0 1 0 5"/>
+          <path class="w2" d="M17.5 7a7 7 0 0 1 0 10"/>
+          <path class="x" d="M15.5 9.5l5 5M20.5 9.5l-5 5"/>
+        </svg>
+      </button>
+      <div class="slider vol" id="vol"><div class="fillbar" id="volFill"><i></i></div></div>
+    </div>
+  </div>
+
+  <!-- ---------- contact window ---------- -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" hidden>
+    <div class="m-back" data-close></div>
+    <div class="m-panel">
+      <button class="m-close" data-close aria-label="Close">
+        <svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg>
+      </button>
+      <h2 class="m-title" id="mTitle">Get in touch</h2>
+      <p class="m-sub" id="mSub"></p>
+      <textarea class="m-msg" id="mMsg" rows="7" spellcheck="false"></textarea>
+      <div class="m-row">
+        <button class="m-link" id="mCopy">Copy message</button>
+        <button class="m-link" id="mClear">Clear selection</button>
+      </div>
+      <div class="m-btns" id="mBtns"></div>
+      <p class="m-note" id="mNote">Message copied — paste it into the chat.</p>
+    </div>
+  </div>
+
+  <audio id="audio" preload="none"></audio>
+  <script src="settings.js?v=5"></script>
+  <script src="tracks.js?v=5"></script>
+  <script src="app.js?v=5"></script>
+</body>
+</html>
