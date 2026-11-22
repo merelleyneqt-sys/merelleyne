@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Merelleyne — Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070707; --ink: #ecebe7; --mute: rgba(236,235,231,.42); --line: rgba(236,235,231,.1);
+      --red: #b3141c; --serif: "Oranienbaum", "Bodoni 72", Didot, serif; --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--ink); font: 12px var(--mono); -webkit-font-smoothing: antialiased; min-height: 100vh; }
+    button, input { font: inherit; color: inherit; background: none; border: 0; }
+    button { cursor: pointer; transition: transform .12s, background .2s, color .2s, border-color .2s; }
+    button:active { transform: scale(.92); }
+    a { color: inherit; }
+    main { max-width: 760px; margin: 0 auto; padding: 40px 16px 80px; }
+
+    header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+    .brand { display: flex; align-items: baseline; gap: 12px; }
+    .brand h1 { font: 400 32px/1 var(--serif); text-transform: uppercase; }
+    .brand span { color: var(--red); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; }
+    .actions { display: flex; align-items: center; gap: 18px; }
+    .link { color: var(--mute); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; }
+    .link:hover { color: var(--ink); }
+    .publish { background: var(--ink); color: #050505; font: 20px/1 var(--serif); text-transform: uppercase; padding: 10px 20px 8px; }
+    .publish:hover { background: var(--red); color: var(--ink); }
+    .publish:disabled { opacity: .5; pointer-events: none; }
+
+    .status { min-height: 18px; margin: -14px 0 14px; color: var(--mute); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; text-align: right; }
+    .status.err { color: var(--red); }
+
+    .drop {
+      display: grid; place-items: center; text-align: center; gap: 6px;
+      border: 1px dashed rgba(236,235,231,.25); padding: 34px 16px; cursor: pointer;
+      transition: border-color .2s, background .2s;
+    }
+    .drop:hover, .drop.over { border-color: var(--ink); background: rgba(236,235,231,.03); }
+    .drop b { font: 400 24px/1 var(--serif); text-transform: uppercase; }
+    .drop small { color: var(--mute); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+
+    .queue { list-style: none; margin-top: 10px; }
+    .queue li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 2px; color: var(--mute); font-size: 11px; border-bottom: 1px solid var(--line); }
+    .queue li.err { color: var(--red); }
+    .queue li .dots::after { content: ""; animation: dots 1.2s steps(4) infinite; }
+    @keyframes dots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
+
+    h2 { margin: 34px 0 10px; color: var(--mute); font-weight: 400; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; display: flex; justify-content: space-between; }
+
+    .list { list-style: none; border: 1px solid var(--line); background: rgba(12,12,12,.9); }
+    .row { display: grid; grid-template-columns: 30px 1fr 64px 64px 44px auto; align-items: center; gap: 10px; padding: 8px 12px; border-top: 1px solid var(--line); }
+    .row:first-child { border-top: 0; }
+    .row.new { animation: flash 1.2s ease; }
+    @keyframes flash { from { background: rgba(179,20,28,.25); } }
+    .row input { width: 100%; padding: 6px 8px; border: 1px solid transparent; transition: border-color .2s, background .2s; }
+    .row input:hover { border-color: var(--line); }
+    .row input:focus { outline: none; border-color: rgba(236,235,231,.35); background: rgba(236,235,231,.04); }
+    .row .title { font: 20px/1.1 var(--serif); }
+    .row .small { font-size: 11px; text-align: center; }
+    .row .small::placeholder { color: rgba(236,235,231,.25); }
+    .dur { color: var(--mute); font-size: 10.5px; text-align: right; }
+    .ib { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid rgba(236,235,231,.2); }
+    .ib:hover { border-color: var(--ink); }
+    .ib svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .ib .fill { fill: currentColor; stroke: none; }
+    .ib.on { background: var(--ink); color: #050505; border-color: var(--ink); }
+    .ib.del:hover { background: var(--red); border-color: var(--red); }
+    .tools { display: flex; gap: 4px; }
+    .ib:disabled { opacity: .25; pointer-events: none; }
+    .empty { padding: 28px; text-align: center; color: var(--mute); }
+
+    .offline { max-width: 460px; margin: 18vh auto 0; text-align: center; line-height: 1.7; color: var(--mute); }
+    .offline b { display: block; margin-bottom: 10px; color: var(--ink); font: 400 30px/1 var(--serif); text-transform: uppercase; }
+
+    @media (max-width: 620px) {
+      .row { grid-template-columns: 30px 1fr auto; }
+      .row .small, .dur { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main id="app" hidden>
+    <header>
+      <div class="brand"><h1>Merelleyne</h1><span>Admin</span></div>
+      <div class="actions">
+        <a class="link" href="/" target="_blank">View site ↗</a>
+        <button class="publish" id="publish">Publish</button>
+      </div>
+    </header>
+    <p class="status" id="status"></p>
+
+    <label class="drop" id="drop">
+      <b>Drop audio here</b>
+      <small>or click to choose · MP3 · WAV · AIFF · FLAC</small>
+      <input type="file" id="file" accept=".mp3,.wav,.aif,.aiff,.flac,.m4a,audio/*" multiple hidden>
+    </label>
+    <ul class="queue" id="queue"></ul>
+
+    <h2><span>Tracks — shown on the site in this order</span><span id="count"></span></h2>
+    <ul class="list" id="list"></ul>
+  </main>
+
+  <div class="offline" id="offline" hidden>
+    <b>Admin is offline</b>
+    The admin only works on your Mac.<br>Double-click <code>Admin.command</code> in the project folder.
+  </div>
+
+  <audio id="audio"></audio>
+
+  <script>
+  (() => {
+    const $ = id => document.getElementById(id);
+    const list = $("list"), audio = $("audio"), statusEl = $("status");
+    let tracks = [], playing = null, saveTimer;
+
+    const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const fmt = s => `${Math.floor((s || 0) / 60)}:${String(Math.floor(s || 0) % 60).padStart(2, "0")}`;
+    const status = (t, err) => { statusEl.textContent = t; statusEl.classList.toggle("err", !!err); };
+
+    const icons = {
+      play: '<svg viewBox="0 0 24 24"><path class="fill" d="M8 5v14l11-7z"/></svg>',
+      pause: '<svg viewBox="0 0 24 24"><path class="fill" d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>',
+      up: '<svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg>',
+      down: '<svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg>',
+      del: '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+    };
+
+    function render(flashFile) {
+      $("count").textContent = tracks.length ? `${tracks.length}` : "";
+      if (!tracks.length) { list.innerHTML = '<li class="empty">No tracks yet — drop some audio above.</li>'; return; }
+      list.innerHTML = tracks.map((t, i) => `
+        <li class="row${t.file === flashFile ? " new" : ""}" data-i="${i}">
+          <button class="ib ${playing === t.file && !audio.paused ? "on" : ""}" data-act="play" aria-label="Preview">${playing === t.file && !audio.paused ? icons.pause : icons.play}</button>
+          <input class="title" data-f="title" value="${esc(t.title)}" aria-label="Title">
+          <input class="small" data-f="key" value="${esc(t.key)}" placeholder="Key" aria-label="Key">
+          <input class="small" data-f="bpm" value="${esc(t.bpm)}" placeholder="BPM" inputmode="numeric" aria-label="BPM">
+          <span class="dur">${fmt(t.duration)}</span>
+          <div class="tools">
+            <button class="ib" data-act="up" ${i === 0 ? "disabled" : ""} aria-label="Move up">${icons.up}</button>
+            <button class="ib" data-act="down" ${i === tracks.length - 1 ? "disabled" : ""} aria-label="Move down">${icons.down}</button>
+            <button class="ib del" data-act="del" aria-label="Delete">${icons.del}</button>
+          </div>
+        </li>`).join("");
+    }
+
+    async function api(path, opts) {
+      const r = await fetch(path, opts);
+      const j = await r.json().catch(() => ({ error: "Bad response" }));
+      if (!r.ok || j.error) throw new Error(j.error || r.statusText);
+      return j;
+    }
+
+    async function save() {
+      clearTimeout(saveTimer);
+      status("Saving…");
+      try {
+        const saved = await api("/api/tracks", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(tracks) });
+        // keep durations (server returns the cleaned list without them)
+        const dur = Object.fromEntries(tracks.map(t => [t.file, t.duration]));
+        tracks = saved.map(t => ({ ...t, duration: dur[t.file] }));
+        status("Saved on this Mac — press Publish to put it online");
+      } catch (e) { status("Save failed: " + e.message, true); }
+    }
+    const saveSoon = () => { clearTimeout(saveTimer); status("Editing…"); saveTimer = setTimeout(save, 700); };
+
+    /* ---- list interactions ---- */
+    list.addEventListener("input", e => {
+      const row = e.target.closest(".row"), f = e.target.dataset.f;
+      if (!row || !f) return;
+      tracks[+row.dataset.i][f] = e.target.value;
+      saveSoon();
+    });
+    list.addEventListener("click", async e => {
+      const b = e.target.closest("[data-act]"); if (!b) return;
+      const i = +b.closest(".row").dataset.i, t = tracks[i];
+      if (b.dataset.act === "play") {
+        if (playing === t.file && !audio.paused) audio.pause();
+        else { if (playing !== t.file) { audio.src = "/audio/" + t.file; playing = t.file; } audio.play(); }
+        return;
+      }
+      if (b.dataset.act === "up" || b.dataset.act === "down") {
+        const j = b.dataset.act === "up" ? i - 1 : i + 1;
+        [tracks[i], tracks[j]] = [tracks[j], tracks[i]];
+        render(); await save(); return;
+      }
+      if (b.dataset.act === "del") {
+        if (!confirm(`Delete “${t.title}” from the site?`)) return;
+        if (playing === t.file) { audio.pause(); playing = null; }
+        tracks.splice(i, 1);
+        render(); await save();
+      }
+    });
+    audio.addEventListener("play", () => render());
+    audio.addEventListener("pause", () => render());
+
+    /* ---- upload ---- */
+    async function upload(files) {
+      for (const file of files) {
+        const li = document.createElement("li");
+        li.innerHTML = `<span>${esc(file.name)}</span><span class="dots">Converting</span>`;
+        $("queue").prepend(li);
+        try {
+          const t = await api("/api/upload", { method: "POST", headers: { "X-Filename": encodeURIComponent(file.name) }, body: file });
+          tracks.unshift(t);            // newest on top
+          render(t.file);
+          await save();
+          li.remove();
+        } catch (e) {
+          li.classList.add("err");
+          li.lastElementChild.className = "";
+          li.lastElementChild.textContent = e.message;
+        }
+      }
+    }
+    const drop = $("drop");
+    $("file").addEventListener("change", e => { upload([...e.target.files]); e.target.value = ""; });
+    ["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
+    ["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
+    drop.addEventListener("drop", e => upload([...e.dataTransfer.files]));
+    // dropping a file anywhere shouldn't open it in the browser
+    window.addEventListener("dragover", e => e.preventDefault());
+    window.addEventListener("drop", e => { e.preventDefault(); if (!drop.contains(e.target)) upload([...e.dataTransfer.files]); });
+
+    /* ---- publish ---- */
+    $("publish").addEventListener("click", async () => {
+      const b = $("publish"); b.disabled = true; status("Publishing…");
+      try { await save(); const r = await api("/api/publish", { method: "POST" }); status(r.message); }
+      catch (e) { status("Publish failed: " + e.message, true); }
+      b.disabled = false;
+    });
+
+    /* ---- start: only works when served by scripts/serve.py on this Mac ---- */
+    (async () => {
+      try {
+        tracks = await api("/api/tracks");
+        $("app").hidden = false;
+        render();
+      } catch { $("offline").hidden = false; }
+    })();
+  })();
+  </script>
+</body>
+</html>
