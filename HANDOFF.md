@@ -15,6 +15,9 @@ _Last updated: 2026-11-22. Talk to the user in Russian, simply; site UI stays En
   - To ship: check it in the browser, then `git push && bash scripts/deploy.sh` (or press Publish in the admin).
 - **Contact window: title "Get in touch" removed** (`?v=7`). Top now shows a small "Selected · N" label and a scrollable list (max ~4 rows visible) of selected tracks — serif title, key/BPM, red left marker, ✕ to deselect (updates the message). Empty state: "Pick tracks with + to list them here".
   - Committed locally, **not pushed/deployed, not visually checked** (pane blocked; headless Brave screenshot hung).
+- **+20 random test tracks** (now 30). Picked from the drive's `*other files*.zip` archives, one file per project (prefer TAG → `Merelleyne - Title (Key_BPM).mp3` → master WAV), converted to 160k MP3. Key/BPM filled where the file/folder name had it; 12 tracks have no key/BPM (fill in admin).
+  - ⚠ **Only ATLAS is tagged — the other 19 are full untagged versions.** Ask the user before publishing them online (anyone could download them). Audio folder is now ~125 MB.
+- Fixed admin bug: saving a track with empty BPM crashed (`int(None)` in `serve.py write_tracks`).
 - `HANDOFF.md` itself is also only local.
 
 ## Next task — EN/RU language switch (planned, NOT started; user said "hold, just write it down")

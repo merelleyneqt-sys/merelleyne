@@ -63,7 +63,7 @@ def write_tracks(tracks):
             continue
         bpm = t.get("bpm")
         try:
-            bpm = int(bpm) if str(bpm).strip() else None
+            bpm = int(bpm) if bpm is not None and str(bpm).strip() else None
         except ValueError:
             bpm = None
         clean.append({"title": str(t.get("title", "")).strip() or f, "key": str(t.get("key", "")).strip(),
