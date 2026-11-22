@@ -48,6 +48,32 @@
     </footer>
   </main>
 
+  <div class="player" id="player" aria-label="Player">
+    <div class="ctrls">
+      <button class="ctl" id="shuffle" aria-label="Shuffle" aria-pressed="false">
+        <svg viewBox="0 0 24 24"><path d="M3 7h3.5c2 0 3 1 4.3 3l2.4 4c1.3 2 2.3 3 4.3 3H21M17.5 4.5 21 7l-3.5 2.5M3 17h3.5c1.3 0 2.2-.4 3-1.2M13.5 8.2c.8-.8 1.7-1.2 3-1.2H21M17.5 14.5 21 17l-3.5 2.5"/></svg>
+      </button>
+      <button class="ctl" id="prev" aria-label="Previous">
+        <svg viewBox="0 0 24 24"><path class="fill" d="M18 5v14L8 12zM6 5h2v14H6z"/></svg>
+      </button>
+      <button class="ctl big" id="toggle" aria-label="Play / pause">
+        <svg viewBox="0 0 24 24"><path class="fill i-play" d="M9 6.5v11l8.5-5.5z"/><path class="fill i-pause" d="M8 6h3v12H8zM13 6h3v12h-3z"/></svg>
+      </button>
+      <button class="ctl" id="next" aria-label="Next">
+        <svg viewBox="0 0 24 24"><path class="fill" d="M6 5v14l10-7zM16 5h2v14h-2z"/></svg>
+      </button>
+      <button class="ctl" id="repeat" aria-label="Repeat" data-mode="off">
+        <svg viewBox="0 0 24 24"><path d="M4 11V9.5A2.5 2.5 0 0 1 6.5 7H19M16 4l3 3-3 3M20 13v1.5a2.5 2.5 0 0 1-2.5 2.5H5M8 20l-3-3 3-3"/></svg>
+        <span class="one">1</span>
+      </button>
+    </div>
+    <div class="seek">
+      <span class="t" id="tCur">0:00</span>
+      <div class="track" id="track"><div class="fillbar" id="fill"><i></i></div></div>
+      <span class="t" id="tDur">0:00</span>
+    </div>
+  </div>
+
   <audio id="audio" preload="none"></audio>
   <script src="tracks.js"></script>
   <script src="app.js"></script>
