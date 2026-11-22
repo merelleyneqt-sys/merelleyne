@@ -17,6 +17,19 @@ _Last updated: 2026-11-22. Talk to the user in Russian, simply; site UI stays En
   - Committed locally, **not pushed/deployed, not visually checked** (pane blocked; headless Brave screenshot hung).
 - `HANDOFF.md` itself is also only local.
 
+## Next task — EN/RU language switch (planned, NOT started; user said "hold, just write it down")
+User wants a global language toggle: **English and Russian**, covering the whole site **including the Contact message**. Toggle goes in the **top-right corner**.
+Plan agreed so far (implement only when the user says go):
+- New `i18n.js` with all UI strings side by side `{ en: {...}, ru: {...} }` so the user can edit texts easily. Mark static elements in `index.html` with `data-i18n` / `data-i18n-html` / `data-i18n-aria`; `app.js` gets a `t(key)` helper and `applyLang()` (sets `<html lang>`, title, meta description, all marked texts, row aria-labels, repeat/mute labels, channel names, re-renders the contact window if open).
+- Strings to cover: header sub ("Arrangements · Vol. 01" → "Аранжировки · Том 01"), Contact ("Связаться"), hint under Contact, "Copy message"/"Clear selection" ("Скопировать"/"Очистить выбор"), "Selected · N"/"Nothing selected"/empty-list text ("Выбрано · N"/"Ничего не выбрано"/"Отметьте треки кнопкой + …"), clipboard hint and "copied" notes, Email button ("Почта"), player aria labels. Track titles and "BPM" stay as is. Admin stays English.
+- `settings.js`: `messageWithTracks`, `messageEmpty`, `emailSubject` become `{ en, ru }`. RU drafts:
+  - with tracks: "Привет! Меня интересуют эти аранжировки:\n{list}\n\nПодскажите, пожалуйста, по цене и лицензии?"
+  - empty: "Привет! Меня интересуют ваши аранжировки. Подскажите, пожалуйста, по цене и лицензии?"
+  - subject: "Запрос по аранжировкам"
+- Toggle UI: fixed top-right, mono 10.5px "EN / RU", active = ink (+ small red dot), inactive = muted; soft fade on switched texts. Remember choice in localStorage; first visit → Russian if browser language is ru, else English.
+- **Check first:** does Oranienbaum (serif) have Cyrillic? A quick check of Google Fonts CSS was inconclusive. If not, pick a close Cyrillic condensed serif for RU or keep the serif for Latin only. IBM Plex Mono has Cyrillic.
+- Bump `?v=` to 8. Keep everything local/unpublished until the user says publish.
+
 ## Known issues / gotchas
 - The built-in Browser pane is blocked by a leftover **t.me popup** (opened when the user tested the Telegram button). Navigation/JS in the pane refuse until the user closes it. Safari (`open -a Safari <url>`) works meanwhile.
 - A stale terminal tab "GitHub login" (c1) is still open; the user typed in it, so only the user can close it.
