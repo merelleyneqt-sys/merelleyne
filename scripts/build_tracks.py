@@ -2,7 +2,7 @@
 """Rebuild tracks.js from tracks.json + audio/*.mp3 (adds duration).
 
 Usage: python3 scripts/build_tracks.py
-Edit tracks.json (title, key, bpm, price, buy link), drop the mp3 into audio/, run this.
+Edit tracks.json (title, key, bpm), drop the mp3 into audio/, run this.
 """
 import json, subprocess, pathlib
 
