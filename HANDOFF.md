@@ -27,6 +27,13 @@ _Last updated: 2026-11-22. Talk to the user in Russian, simply; site UI stays En
 - **Right-click menu** on a track (long-press on phones): Play/Pause, Add/Remove selection, **Download tagged MP3 — Free** (downloads `audio/<file>` as `Merelleyne - Title (tagged).mp3`), Copy link (`site/#<file-slug>` → page scrolls to the track and loads it in the player, no autoplay). Toast "Link copied".
   - ⚠ The free download gives whatever is in `audio/` — for the 19 untagged test tracks that is the **full untagged version**.
 
+## Future feature — "Sold" tracks (user request, NOT started; do after hosting is settled)
+- From the admin page (or, later, a "playlist edit mode" on his own profile page) the user can **mark a track as sold**.
+- On the public site a sold track's **+ (add to selection / "cart") button turns grey and inactive**. Clicking it shows a message that **this track is already sold** (EN + RU texts in `i18n.js`, e.g. "This track is already sold" / "Этот трек уже продан").
+- The track stays in the list and can still be played (assumption — confirm with the user). A sold track can't be in the selection: drop it from saved selections on load.
+- Implementation idea with today's setup: `"sold": true` in `tracks.json` → admin row gets a "Sold" toggle → Publish. A real online "edit mode" on a profile page would need login + a backend (today the admin is local-only by the user's choice) — discuss when we get there.
+- Also hide/disable "Download tagged MP3" for sold tracks? Ask the user.
+
 ## Known issues / gotchas
 - The built-in Browser pane is blocked by a leftover **t.me popup** (opened when the user tested the Telegram button). Navigation/JS in the pane refuse until the user closes it. Safari (`open -a Safari <url>`) works meanwhile.
 - A stale terminal tab "GitHub login" (c1) is still open; the user typed in it, so only the user can close it.
