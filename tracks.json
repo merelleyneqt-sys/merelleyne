@@ -1,5 +1,5 @@
 [
-  {"title": "Faded", "key": "Gm", "bpm": 120, "genre": "", "file": "faded.mp3"},
+  {"title": "Faded", "key": "Gm", "bpm": 120, "genre": "", "file": "faded.mp3", "added": "2026-11-22T00:00:00"},
   {"title": "Ashfall", "key": "Gm", "bpm": 135, "genre": "", "file": "ashfall.mp3"},
   {"title": "Nocturnal", "key": "F#m", "bpm": 118, "genre": "", "file": "nocturnal.mp3"},
   {"title": "Silent", "key": "Am", "bpm": 135, "genre": "", "file": "silent.mp3", "guess": ["key"]},

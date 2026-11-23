@@ -38,12 +38,14 @@
   /* ================= list ================= */
   const selIcon = '<svg viewBox="0 0 24 24"><path class="i-plus" d="M12 5v14M5 12h14"/><path class="i-check" d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 
+  // newest track = latest upload date ("added", set by the admin)
+  const newest = tracks.reduce((best, tr, i) => (tr.added || "") > (tracks[best].added || "") ? i : best, 0);
   const COLS = ["bpm", "key", "genre"];
 
   list.innerHTML = tracks.map((tr, i) => `
       <li class="row" data-i="${i}" id="t-${esc(slug(tr))}">
         <div class="info">
-          <div class="title">${esc(tr.title)}<span class="eq" aria-hidden="true"><i></i><i></i><i></i></span></div>
+          <div class="title">${esc(tr.title)}${i === newest ? '<span class="new">New</span>' : ""}<span class="eq" aria-hidden="true"><i></i><i></i><i></i></span></div>
           <div class="cells">${COLS.map(c => `<span class="cell c-${c}${tr[c] ? "" : " nil"}">${esc(tr[c] || "—")}</span>`).join("")}</div>
         </div>
         <div class="btns">

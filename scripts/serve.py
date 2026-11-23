@@ -8,7 +8,7 @@ Usage: python3 scripts/serve.py [port]      (or double-click Admin.command)
 Binds to 127.0.0.1 only, so nobody else on the network or internet can reach the admin.
 The public (hosted) site is plain static files: it has no upload API at all.
 """
-import http.server, json, os, re, shutil, subprocess, sys, tempfile, pathlib, urllib.parse
+import datetime, http.server, json, os, re, shutil, subprocess, sys, tempfile, pathlib, urllib.parse
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 AUDIO = ROOT / "audio"
@@ -84,6 +84,7 @@ def write_tracks(tracks):
         clean.append({"title": str(t.get("title", "")).strip() or f, "key": key,
                       "bpm": bpm,
                       "genre": str(t.get("genre") or "").strip(), "file": f,
+                      **({"added": str(t["added"])} if t.get("added") else {}),
                       **({"guess": guess} if guess else {})})   # guess = found by analysis, not confirmed yet
     TRACKS_JSON.write_text("[\n" + ",\n".join("  " + json.dumps(t, ensure_ascii=False) for t in clean) + "\n]\n")
     subprocess.run([sys.executable, str(ROOT / "scripts" / "build_tracks.py")], check=True, capture_output=True)
@@ -211,6 +212,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             except Exception as e:  # the upload itself is fine
                 note = str(e)
         self.send_json({"title": title, "key": key, "bpm": bpm, "guess": guess, "note": note,
+                        "added": datetime.datetime.now().isoformat(timespec="milliseconds"),
                         "file": out.name, "duration": duration(out)})
 
     def publish(self):
