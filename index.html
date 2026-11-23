@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <!-- bump ?v= when css/js change so browsers (Safari) don't show a stale copy -->
-  <link rel="stylesheet" href="style.css?v=24">
+  <link rel="stylesheet" href="style.css?v=25">
 </head>
 <body>
   <div class="lang" id="lang" role="group" aria-label="Language" data-i18n-aria="language">
@@ -59,7 +59,7 @@
       <div class="cols" id="cols" role="group" data-i18n-aria="showDetails">
         <button type="button" data-col="bpm" data-i18n="colBpm">BPM</button>
         <button type="button" data-col="key" data-i18n="colKey">Key</button>
-        <button type="button" data-col="genre" data-i18n="colGenre">Genre</button>
+        <button type="button" data-col="genre" id="genreBtn"><span data-i18n="colGenre">Genre</span><b id="genreN"></b></button>
       </div>
     </div>
 
@@ -152,13 +152,38 @@
     </div>
   </div>
 
+  <!-- ---------- request form (Contact → Email) ---------- -->
+  <div class="modal" id="req" role="dialog" aria-modal="true" aria-labelledby="rTitle" hidden>
+    <div class="m-back" data-close></div>
+    <div class="m-panel r-panel">
+      <button class="m-close" data-close aria-label="Close" data-i18n-aria="close">
+        <svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg>
+      </button>
+      <p class="m-sub" id="rTitle" data-i18n="reqTitle">Request</p>
+      <form id="rForm" novalidate>
+        <ul class="r-sum" id="rSum"></ul>
+        <p class="r-hint" data-i18n="reqHint"></p>
+        <label class="r-f"><span>Telegram</span><input name="telegram" maxlength="100" autocomplete="off" placeholder="@username"></label>
+        <label class="r-f"><span>Instagram</span><input name="instagram" maxlength="100" autocomplete="off" placeholder="@username"></label>
+        <label class="r-f"><span>VK</span><input name="vk" maxlength="100" autocomplete="off" placeholder="vk.com/…"></label>
+        <label class="r-f"><span>Email</span><input name="email" type="email" maxlength="150" autocomplete="email" placeholder="you@mail.com"></label>
+        <textarea class="m-msg" name="comment" rows="3" maxlength="2000" data-i18n-ph="reqComment" data-i18n-aria="reqComment"></textarea>
+        <input class="r-trap" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="r-ok"><input type="checkbox" name="consent"><i></i><span data-i18n="reqConsent"></span></label>
+        <button class="m-btn r-send" id="rSend" type="submit"><span data-i18n="reqSend">Send</span></button>
+        <p class="m-note" id="rNote" role="status"></p>
+      </form>
+      <div class="r-done" id="rDone" hidden><b data-i18n="reqDone"></b><p data-i18n="reqDoneNote"></p></div>
+    </div>
+  </div>
+
   <!-- right-click / long-press menu -->
   <div class="ctx" id="ctx" role="menu" hidden></div>
 
   <audio id="audio" preload="none"></audio>
-  <script src="i18n.js?v=24"></script>
-  <script src="settings.js?v=24"></script>
-  <script src="tracks.js?v=24"></script>
-  <script src="app.js?v=24"></script>
+  <script src="i18n.js?v=25"></script>
+  <script src="settings.js?v=25"></script>
+  <script src="tracks.js?v=25"></script>
+  <script src="app.js?v=25"></script>
 </body>
 </html>

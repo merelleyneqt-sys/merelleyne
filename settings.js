@@ -6,6 +6,10 @@ window.SETTINGS = {
     email: "merelleynehq@gmail.com",
   },
 
+  // Contact → Email opens a request form; letters arrive through Web3Forms (the key is public by design).
+  // Empty key = the button opens the visitor's own mail app instead.
+  formKey: "",
+
   // Licenses and fixed prices belong to a profile. A track uses the profile named in its "profile"
   // field (tracks.json); without one it uses defaultProfile.
   // price: null = no fixed price: a grey Contact button with the "askHint" text (i18n.js).
