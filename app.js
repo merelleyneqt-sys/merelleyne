@@ -84,6 +84,7 @@
   function show(sec, n) {
     section = sec; tome = n;
     q.value = "";
+    genres.clear();
     renderSub();
     filter();
     const el = sec === "tracks" ? list : shop;
@@ -92,6 +93,7 @@
 
   /* ---- BPM / key / genre switches: show or hide details in the rows ---- */
   const colsBox = $("cols");
+  let genreHeld = false, genreTimer = 0;
   let shownCols = [].concat(store.get("cols", [])).filter(c => COLS.includes(c));
   function renderCols() {
     COLS.forEach(c => list.classList.toggle("show-" + c, shownCols.includes(c)));
@@ -99,6 +101,7 @@
   }
   colsBox.addEventListener("click", e => {
     const b = e.target.closest("[data-col]"); if (!b) return;
+    if (genreHeld && b.id === "genreBtn") { genreHeld = false; return; }
     const c = b.dataset.col;
     shownCols = shownCols.includes(c) ? shownCols.filter(x => x !== c) : [...shownCols, c];
     store.set("cols", shownCols);
@@ -109,6 +112,9 @@
   /* ================= search ================= */
   const q = $("q"), qClear = $("qClear");
   const norm = s => s.toLowerCase().replace(/ё/g, "е").trim();
+  const genres = new Set();   // ticked in the genre menu
+  const allGenres = [...new Set(tracks.map(tr => tr.genre).filter(Boolean))].sort();
+  const filtering = () => !!(q.value.trim() || genres.size);
   function filter() {
     const v = norm(q.value);
     let shown = 0, first = true;
@@ -116,19 +122,20 @@
     // search looks through every volume; without it only the open volume is shown
     (inTracks ? rows : shopRows).forEach((r, i) => {
       const ok = inTracks
-        ? (v ? norm(tracks[i].title).includes(v) : tomeOf(i) === tome)
+        ? (filtering() ? (!v || norm(tracks[i].title).includes(v)) && (!genres.size || genres.has(tracks[i].genre)) : tomeOf(i) === tome)
         : products[i].section === section && (!v || norm(products[i].title).includes(v));
       r.hidden = !ok;
       r.classList.toggle("first", ok && first);
       if (ok) { shown++; first = false; }
     });
     qClear.hidden = !v;
-    $("found").textContent = v ? t("found", { n: shown }) : "";
+    $("found").textContent = filtering() ? t("found", { n: shown }) : "";
     $("none").hidden = shown > 0;
-    $("none").textContent = t(v ? "nothingFound" : "comingSoon");
+    $("none").textContent = t(filtering() ? "nothingFound" : "comingSoon");
     list.hidden = !inTracks || shown === 0;
     shop.hidden = inTracks || shown === 0;
     colsBox.hidden = !inTracks;
+    $("genreN").textContent = genres.size ? genres.size : "";
     $("bar").hidden = !v && shown === 0;
   }
   q.addEventListener("input", filter);
@@ -139,7 +146,7 @@
   /* ================= playback ================= */
   function load(i) {
     // playback moved into another volume: turn the page if the listener was on the old one
-    if (cur >= 0 && section === "tracks" && !q.value && tome === tomeOf(cur) && tome !== tomeOf(i)) show("tracks", tomeOf(i));
+    if (cur >= 0 && section === "tracks" && !filtering() && tome === tomeOf(cur) && tome !== tomeOf(i)) show("tracks", tomeOf(i));
     if (cur >= 0) rows[cur].classList.remove("active", "on");
     cur = i;
     audio.src = "audio/" + tracks[i].file;
@@ -155,7 +162,7 @@
   }
   // next/prev go through all volumes in order, or through the search results while searching
   function nextIndex(step) {
-    const vis = section === "tracks" && q.value.trim() ? visible() : tracks.map((_, i) => i);
+    const vis = section === "tracks" && filtering() ? visible() : tracks.map((_, i) => i);
     if (!vis.length) return -1;
     if (shuffle && vis.length > 1) {
       let n; do { n = vis[Math.floor(Math.random() * vis.length)]; } while (n === cur);
@@ -378,6 +385,7 @@
   $("mBtns").addEventListener("click", async e => {
     const b = e.target.closest(".m-btn"); if (!b) return;
     const c = channels[+b.dataset.k], m = mMsg.value;
+    if (c.id === "email" && S.formKey) { closeModal(); setTimeout(openReq, 210); return; }
     if (c.copy && await copy(m)) note(t("copiedPaste"));
     window.open(c.href(m), c.id === "email" ? "_self" : "_blank", "noopener");
   });
@@ -422,6 +430,85 @@
   modal.addEventListener("click", e => { if (e.target.closest("[data-close]")) closeModal(); });
   $("mCopy").addEventListener("click", async () => { if (await copy(mMsg.value)) note(t("copied")); });
   $("mClear").addEventListener("click", () => { picked.clear(); renderPicked(false); fillModal(); });
+
+  /* ================= request form (Contact → Email) ================= */
+  const req = $("req"), rForm = $("rForm"), rNote = $("rNote"), rSend = $("rSend");
+  const chosen = () => goods.filter(g => picked.has(g.file));
+  function renderReq() {
+    const sel = chosen();
+    $("rSum").innerHTML = sel.length
+      ? sel.map(g => `<li><span>${esc(g.title)}</span><em>${esc(licenseOf(g) ? licText(licenseOf(g)) : "")}</em></li>`).join("") +
+        (total(sel) ? `<li class="r-total"><span></span><em>${esc(t("total", { n: money(total(sel)) }))}</em></li>` : "")
+      : `<li><em>${esc(t("reqNothing"))}</em></li>`;
+  }
+  function openReq() {
+    closeMenu();
+    renderReq();
+    // keep what the visitor typed into the prepared message
+    if (!rForm.comment.value && mMsg.value && mMsg.value !== message()) rForm.comment.value = mMsg.value;
+    rForm.hidden = false; $("rDone").hidden = true;
+    rNote.textContent = "";
+    req.classList.remove("closing");
+    req.hidden = false;
+    document.body.style.overflow = "hidden";
+  }
+  function closeReq() {
+    if (req.hidden || req.classList.contains("closing")) return;
+    req.classList.add("closing");
+    setTimeout(() => { req.hidden = true; req.classList.remove("closing"); document.body.style.overflow = ""; }, 200);
+  }
+  req.addEventListener("click", e => { if (e.target.closest("[data-close]")) closeReq(); });
+
+  // the letter goes to the owner, so it is always in Russian
+  function letter() {
+    const sel = chosen(), val = n => rForm[n].value.trim();
+    const price = l => l.price == null ? "цена по договорённости" : money(l.price);
+    const lines = sel.map(g => `— ${g.title}${desc(g) ? ` (${desc(g)})` : ""}${licenseOf(g) ? ` — ${licenseOf(g).name} — ${price(licenseOf(g))}` : ""}`);
+    const sum = total(sel) ? money(total(sel)) : "";
+    const contacts = [["Telegram", "telegram"], ["Instagram", "instagram"], ["VK", "vk"], ["Email", "email"]]
+      .filter(([, n]) => val(n)).map(([name, n]) => `${name}: ${val(n)}`);
+    const text = [
+      "Выбрано:", ...(lines.length ? lines : ["ничего, просто сообщение"]), ...(sum ? [`Итого: ${sum}`] : []),
+      "", "Контакты:", ...contacts,
+      ...(val("comment") ? ["", "Комментарий:", val("comment")] : []),
+    ].join("\n");
+    return {
+      access_key: S.formKey,
+      subject: `Новая заявка${sel.length ? `: треков — ${sel.length}${sum ? `, ${sum}` : ""}` : ""}`,
+      from_name: `${S.artist || "Merelleyne"} — сайт`,
+      ...(val("email") ? { replyto: val("email") } : {}),
+      message: text,
+    };
+  }
+  let sending = false;
+  rForm.addEventListener("submit", async e => {
+    e.preventDefault();
+    if (sending) return;
+    const val = n => rForm[n].value.trim();
+    const fail = (key, el) => { rNote.textContent = t(key); rNote.classList.add("show"); el?.focus(); };
+    if (rForm.botcheck.checked) return;
+    if (!["telegram", "instagram", "vk", "email"].some(val)) return fail("reqNeedContact", rForm.telegram);
+    if (val("email") && !/^\S+@\S+\.\S+$/.test(val("email"))) return fail("reqBadEmail", rForm.email);
+    if (!rForm.consent.checked) return fail("reqNeedConsent", rForm.consent);
+    sending = true;
+    rSend.disabled = true;
+    rNote.classList.remove("show");
+    rNote.textContent = t("reqSending");
+    try {
+      const r = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(letter()),
+      });
+      const j = await r.json();
+      if (!r.ok || !j.success) throw new Error(j.message);
+      rForm.reset();
+      rNote.textContent = "";
+      rForm.hidden = true; $("rDone").hidden = false;
+    } catch { fail("reqFail"); }
+    sending = false;
+    rSend.disabled = false;
+  });
 
   /* ================= links window (click the name) ================= */
   const links = $("links");
@@ -478,7 +565,7 @@
     ctx.querySelector(".ctx-i").focus({ preventScroll: true });
   }
   // small "choose one" menu (sections, volumes); owner = the button it belongs to
-  let menuOwner = null, choose = null;
+  let menuOwner = null, choose = null, stay = false;   // stay: menu remains open while ticking
   function openChoice(owner, title, options, now, fn, x, y) {
     closeMenu();
     menuOwner = owner; choose = fn;
@@ -491,7 +578,7 @@
     ctx.hidden = false;
     // keep inside the viewport; grow from the cursor
     const w = ctx.offsetWidth, h = ctx.offsetHeight, m = 8;
-    const left = Math.min(x, innerWidth - w - m), top = Math.min(y, innerHeight - h - extra - m);
+    const left = Math.min(x, document.documentElement.clientWidth - w - m), top = Math.min(y, innerHeight - h - extra - m);
     ctx.style.left = Math.max(m, left) + "px";
     ctx.style.top = Math.max(m, top) + "px";
     ctx.style.transformOrigin = `${x - Math.max(m, left)}px ${y - Math.max(m, top)}px`;
@@ -499,7 +586,7 @@
   }
   function closeMenu() {
     if (ctx.hidden) return;
-    ctx.hidden = true; menuFor = -1; menuOwner = choose = null;
+    ctx.hidden = true; menuFor = -1; menuOwner = choose = null; stay = false;
     rows.forEach(r => r.classList.remove("ctx-on"));
   }
 
@@ -517,6 +604,7 @@
 
   ctx.addEventListener("click", e => {
     const b = e.target.closest(".ctx-i, .ctx-ask"); if (!b) return;
+    if (stay) return choose(+b.dataset.k);
     const i = menuFor, fn = choose;
     closeMenu();
     if (fn) return fn(+b.dataset.k);
@@ -550,6 +638,43 @@
   /* ---- line under the name: section menu and volume switch ---- */
   let reopened = false, tomeHeld = false, tomeTimer = 0;   // reopened: this press just closed the button's own menu
   document.addEventListener("pointerdown", e => { reopened = !ctx.hidden && !!menuOwner && menuOwner.contains(e.target); }, true);
+  /* ---- genre menu: right-click / long-press on Genre, several at once, all volumes ---- */
+  const genreBtn = $("genreBtn");
+  function openGenres(x, y) {
+    closeMenu();
+    menuOwner = genreBtn;
+    const mark = () => ctx.querySelectorAll(".ctx-c").forEach(b => {
+      const k = +b.dataset.k;
+      b.setAttribute("aria-checked", k < 0 ? !genres.size : genres.has(allGenres[k]));
+    });
+    const item = (k, name, n) => `<button class="ctx-i ctx-c" role="menuitemcheckbox" data-k="${k}"><i></i><span>${esc(name)}</span><b>${n}</b></button>`;
+    ctx.innerHTML = item(-1, t("allGenres"), tracks.length) + '<div class="ctx-sep"></div>' +
+      allGenres.map((g, k) => item(k, g, tracks.filter(tr => tr.genre === g).length)).join("");
+    choose = k => {
+      if (k < 0) genres.clear();
+      else genres.has(allGenres[k]) ? genres.delete(allGenres[k]) : genres.add(allGenres[k]);
+      mark();
+      filter();
+    };
+    stay = true;
+    mark();
+    placeMenu(x, y);
+    ctx.querySelector(".ctx-i").focus({ preventScroll: true });
+  }
+  genreBtn.addEventListener("contextmenu", e => {
+    e.preventDefault();
+    clearTimeout(genreTimer);
+    const r = genreBtn.getBoundingClientRect();
+    openGenres(e.clientX || r.left, e.clientY || r.bottom);
+  });
+  genreBtn.addEventListener("pointerdown", e => {
+    genreHeld = false;
+    if (e.pointerType !== "touch") return;
+    clearTimeout(genreTimer);
+    genreTimer = setTimeout(() => { genreHeld = true; navigator.vibrate?.(10); openGenres(e.clientX, e.clientY); }, 520);
+  });
+  ["pointerup", "pointercancel", "pointerleave"].forEach(n => genreBtn.addEventListener(n, () => clearTimeout(genreTimer)));
+
   function openSections(e) {
     e.preventDefault();
     if (reopened && e.type === "click") { reopened = false; return; }
@@ -581,14 +706,14 @@
   ["pointerup", "pointercancel", "pointerleave"].forEach(n => tomeBtn.addEventListener(n, () => clearTimeout(tomeTimer)));
 
   document.addEventListener("pointerdown", e => { if (!ctx.hidden && !ctx.contains(e.target)) closeMenu(); }, true);
-  addEventListener("scroll", closeMenu, { passive: true });
+  addEventListener("scroll", () => { if (!stay) closeMenu(); }, { passive: true });
   addEventListener("resize", closeMenu);
   addEventListener("blur", closeMenu);
 
   /* ================= keyboard ================= */
   document.addEventListener("keydown", e => {
-    if (e.key === "Escape") { if (!ctx.hidden) return closeMenu(); closeLinks(); return closeModal(); }
-    if (!modal.hidden || !links.hidden || !ctx.hidden || e.target.closest("button, a, input, textarea")) return;
+    if (e.key === "Escape") { if (!ctx.hidden) return closeMenu(); closeLinks(); closeReq(); return closeModal(); }
+    if (!modal.hidden || !links.hidden || !req.hidden || !ctx.hidden || e.target.closest("button, a, input, textarea")) return;
     if (e.key === "/") { e.preventDefault(); q.focus(); return; }
     if (e.code === "Space") { e.preventDefault(); toggle(cur < 0 ? (visible()[0] ?? 0) : cur); }
   });
@@ -614,6 +739,7 @@
     renderLinks();
     filter();
     if (!modal.hidden) fillModal();
+    if (!req.hidden) renderReq();
     closeMenu();
     langBox.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === lang));
     if (animate) {
