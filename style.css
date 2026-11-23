@@ -537,3 +537,23 @@ body.has-player .toast { bottom: 118px; }
 .l-item .h { color: var(--mute); font-size: 10px; letter-spacing: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px; }
 .l-item .a { color: var(--red); font-size: 13px; text-align: right; transition: transform .25s; }
 .l-item:hover .a { transform: translate(2px, -2px); }
+
+/* ---------- line under the name: section + volume buttons ---------- */
+.sub { align-items: baseline; gap: 0; }
+.sub button {
+  position: relative; padding: 8px; margin: -8px 0; letter-spacing: inherit; text-transform: inherit;
+  transition: color .2s;
+  -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; touch-action: manipulation;
+}
+.sub [hidden] { display: none; }
+.sub button::after {
+  content: ""; position: absolute; left: 50%; right: 50%; bottom: 4px; height: 1px; background: var(--red);
+  transition: left .3s cubic-bezier(.2, .8, .2, 1), right .3s cubic-bezier(.2, .8, .2, 1);
+}
+.sub button:hover, .sub button:focus-visible { color: var(--ink); outline: none; }
+.sub button:hover::after, .sub button:focus-visible::after { left: 8px; right: 8px; }
+.list[hidden], .bar[hidden] { display: none; }
+.list.swap { animation: lin .35s cubic-bezier(.2, .8, .2, 1); }
+.ctx-c i { width: 5px; height: 5px; border-radius: 50%; flex: none; }
+.ctx-c[aria-checked="true"] i { background: var(--red); }
+@media (hover: none) { .sub button { padding: 14px 8px; margin: -14px 0; } .sub button::after { bottom: 10px; } }

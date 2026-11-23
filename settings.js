@@ -11,6 +11,11 @@ window.SETTINGS = {
     en: "Hi! I'm interested in these arrangements:\n{list}",
     ru: "Привет! Меня интересуют эти аранжировки:\n{list}",
   },
+  // Used instead when software or sample packs are selected.
+  messageWithProducts: {
+    en: "Hi! I'm interested in:\n{list}",
+    ru: "Привет! Меня интересует:\n{list}",
+  },
   messageEmpty: {
     en: "Hi! I'm interested in your arrangements.",
     ru: "Привет! Меня интересуют ваши аранжировки.",
@@ -19,6 +24,14 @@ window.SETTINGS = {
     en: "Arrangements inquiry",
     ru: "Запрос по аранжировкам",
   },
+
+  // Other sections in the Arrangements menu. An empty section shows "Coming soon".
+  // One line per item: { title: "Name", url: "https://…" } — url is optional:
+  // with it a click on the row opens the page, without it a click selects the item.
+  software: [],
+  samples: [],
+  // How many arrangements are in one volume (Vol. 01 = the first ten in the list, and so on).
+  volumeSize: 10,
 
   // Links window (opens when you click the name MERELLEYNE). Order = order on the site.
   // Leave url empty ("") to hide a line. handle is the small grey text on the right.
