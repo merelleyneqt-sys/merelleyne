@@ -39,6 +39,10 @@ _Last updated: 2026-11-23. Talk to the user in Russian, simply; site UI stays En
 
 - License menu on + with prices (`?v=24`): published 2026-11-23. Old saved selections without a license are dropped.
 
+## To do — recorded 2026-11-23, NOT started (user: "write to handoff"; implement when told)
+1. **Genre menu.** Right-click (long-press on phones) on the "Genre" switch opens a context menu listing every genre present across ALL volumes at once (not only the open one); choosing one filters the list by that genre across all volumes (like search does). Left click keeps showing/hiding the genre column. Assumptions to confirm: one genre at a time or several; an "All genres" item resets. Build the list from `tracks` so new genres appear by themselves; reuse `openChoice`.
+2. **Search + BPM/Key/Genre bar lower.** Currently looks odd (user screenshot): the bar floats in the gap between the header and the list. Move it down, closer to the list (`.bar` margin-bottom 10px, `.head` margin-bottom 36px in style.css). Check RU/EN and phone.
+
 ## Future feature — "Sold" tracks (user request, NOT started; do after hosting is settled)
 - From the admin page (or, later, a "playlist edit mode" on his own profile page) the user can **mark a track as sold**.
 - On the public site a sold track's **+ (add to selection / "cart") button turns grey and inactive**. Clicking it shows a message that **this track is already sold** (EN + RU texts in `i18n.js`, e.g. "This track is already sold" / "Этот трек уже продан").
