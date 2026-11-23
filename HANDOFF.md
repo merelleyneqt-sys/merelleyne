@@ -40,7 +40,7 @@ _Last updated: 2026-11-23. Talk to the user in Russian, simply; site UI stays En
 - License menu on + with prices (`?v=24`): published 2026-11-23. Old saved selections without a license are dropped.
 
 ## To do — recorded 2026-11-23, NOT started (user: "write to handoff"; implement when told)
-1. **Genre menu.** Right-click (long-press on phones) on the "Genre" switch opens a context menu listing every genre present across ALL volumes at once (not only the open one); choosing one filters the list by that genre across all volumes (like search does). Left click keeps showing/hiding the genre column. Assumptions to confirm: one genre at a time or several; an "All genres" item resets. Build the list from `tracks` so new genres appear by themselves; reuse `openChoice`.
+1. **Genre menu.** Right-click (long-press on phones) on the "Genre" switch opens a context menu listing every genre present across ALL volumes at once (not only the open one); choosing filters the list by the ticked genres across all volumes (like search does). Left click keeps showing/hiding the genre column. User decided: SEVERAL genres can be chosen at once (checkmarks; the menu stays open while ticking; a track matches if it has any of them). "All genres" item resets (our assumption). Build the list from `tracks` so new genres appear by themselves; base on `openChoice`, but it closes after one choice.
 2. **Search + BPM/Key/Genre bar lower.** Currently looks odd (user screenshot): the bar floats in the gap between the header and the list. Move it down, closer to the list (`.bar` margin-bottom 10px, `.head` margin-bottom 36px in style.css). Check RU/EN and phone.
 
 ## Future feature — "Sold" tracks (user request, NOT started; do after hosting is settled)
