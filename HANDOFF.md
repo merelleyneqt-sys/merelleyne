@@ -43,7 +43,7 @@ _Last updated: 2026-11-23. Talk to the user in Russian, simply; site UI stays En
 - Web3Forms key connected (user registered merelleynehq@gmail.com). Real test request from localhost accepted by the service (200, success); the letter arrived but landed in Gmail Spam; told the user to mark "not spam" + add a filter for the sender; own domain is the lasting fix. 250 letters/month free; requests stored up to 3 years. No own domain for now (user's choice).
 - Not tested: real long-press on a phone.
 
-## 2026-11-23, `?v=29`: vinyl double-click, sorting, fire visualizer — committed, NOT published
+## 2026-11-23, `?v=29`: vinyl double-click, sorting, fire visualizer — published 2026-11-23
 - Waiting for the user's look at the fire (intensity). Not tested: real phone (long-press, double-tap), Safari speed.
 
 ## Future feature — "Sold" tracks (user request, NOT started; do after hosting is settled)
