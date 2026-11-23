@@ -84,6 +84,7 @@ def write_tracks(tracks):
         clean.append({"title": str(t.get("title", "")).strip() or f, "key": key,
                       "bpm": bpm,
                       "genre": str(t.get("genre") or "").strip(), "file": f,
+                      **({"profile": str(t["profile"])} if t.get("profile") else {}),
                       **({"added": str(t["added"])} if t.get("added") else {}),
                       **({"guess": guess} if guess else {})})   # guess = found by analysis, not confirmed yet
     TRACKS_JSON.write_text("[\n" + ",\n".join("  " + json.dumps(t, ensure_ascii=False) for t in clean) + "\n]\n")

@@ -37,6 +37,8 @@ _Last updated: 2026-11-23. Talk to the user in Russian, simply; site UI stays En
 - Auto BPM/key detection in the admin: done, see CLAUDE.md. Guessed BPM and keys (19) accepted at the user's request. Genres of all 30 tracks filled by scripts/genre.py 2026-11-23 (user may correct).
 - Possibly wrong labels to check with the user: Velvet Skies says 116, analysis hears 106; Radiant Abyss 125 vs 123; Arcane Bm vs B.
 
+- License menu on + with prices (`?v=24`): committed, NOT published yet. Old saved selections without a license are dropped.
+
 ## Future feature — "Sold" tracks (user request, NOT started; do after hosting is settled)
 - From the admin page (or, later, a "playlist edit mode" on his own profile page) the user can **mark a track as sold**.
 - On the public site a sold track's **+ (add to selection / "cart") button turns grey and inactive**. Clicking it shows a message that **this track is already sold** (EN + RU texts in `i18n.js`, e.g. "This track is already sold" / "Этот трек уже продан").

@@ -43,6 +43,10 @@ window.I18N = {
     menuDownload: "Download tagged MP3",
     free: "Free",
     menuLink: "Copy link",
+    // license menu
+    askHint: "Price on request — message me directly to discuss the terms",
+    priceOnRequest: "price on request",
+    total: "Total: {n}",
     linkCopied: "Link copied",
     // player & accessibility
     player: "Player",
@@ -102,6 +106,9 @@ window.I18N = {
     menuDownload: "Скачать MP3 с тегом",
     free: "Бесплатно",
     menuLink: "Скопировать ссылку",
+    askHint: "Стоимость и условия — по договорённости, напишите мне в личные сообщения",
+    priceOnRequest: "цена по договорённости",
+    total: "Итого: {n}",
     linkCopied: "Ссылка скопирована",
     player: "Плеер",
     playPause: "Играть / пауза",
