@@ -38,10 +38,15 @@
   /* ================= list ================= */
   const selIcon = '<svg viewBox="0 0 24 24"><path class="i-plus" d="M12 5v14M5 12h14"/><path class="i-check" d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 
+  // newest track = latest upload date ("added", set by the admin)
+  const newest = tracks.reduce((best, tr, i) => (tr.added || "") > (tracks[best].added || "") ? i : best, 0);
+  const COLS = ["bpm", "key", "genre"];
+
   list.innerHTML = tracks.map((tr, i) => `
       <li class="row" data-i="${i}" id="t-${esc(slug(tr))}">
         <div class="info">
-          <div class="title">${esc(tr.title)}<span class="eq" aria-hidden="true"><i></i><i></i><i></i></span></div>
+          <div class="title">${esc(tr.title)}${i === newest ? '<span class="new">New</span>' : ""}<span class="eq" aria-hidden="true"><i></i><i></i><i></i></span></div>
+          <div class="cells">${COLS.map(c => `<span class="cell c-${c}${tr[c] ? "" : " nil"}">${esc(tr[c] || "—")}</span>`).join("")}</div>
         </div>
         <div class="btns">
           <button class="sel" aria-pressed="false">${selIcon}</button>
@@ -50,14 +55,69 @@
 
   const rows = [...list.querySelectorAll(".row")];
 
+  /* ================= sections & volumes ================= */
+  const SECTIONS = ["tracks", "software", "samples"];
+  const SIZE = S.volumeSize || 10;
+  const tomes = Math.max(1, Math.ceil(tracks.length / SIZE));
+  const tomeOf = i => Math.floor(i / SIZE);
+  const tomeName = n => t("volume", { n: String(n + 1).padStart(2, "0") });
+  let section = "tracks", tome = 0;
+  const shop = $("shop"), catBtn = $("catBtn"), tomeBtn = $("tomeBtn");
+
+  // software & sample packs: same rows; "file" is their id in the selection
+  const products = ["software", "samples"].flatMap(sec =>
+    (S[sec] || []).map(p => ({ ...p, section: sec, file: `${sec}:${p.title}` })));
+  const goods = [...tracks, ...products];
+  shop.innerHTML = products.map((p, i) => `
+      <li class="row" data-i="${i}">
+        <div class="info"><div class="title">${esc(p.title)}</div></div>
+        <div class="btns"><button class="sel" aria-pressed="false">${selIcon}</button></div>
+      </li>`).join("");
+  const shopRows = [...shop.querySelectorAll(".row")];
+
+  function renderSub() {
+    catBtn.textContent = t(section);
+    tomeBtn.textContent = tomeName(tome);
+    tomeBtn.setAttribute("aria-label", t("nextVolume", { t: tomeName(tome) }));
+    tomeBtn.hidden = $("subDot").hidden = section !== "tracks";
+  }
+  function show(sec, n) {
+    section = sec; tome = n;
+    q.value = "";
+    renderSub();
+    filter();
+    const el = sec === "tracks" ? list : shop;
+    el.classList.remove("swap"); void el.offsetWidth; el.classList.add("swap");
+  }
+
+  /* ---- BPM / key / genre switches: show or hide details in the rows ---- */
+  const colsBox = $("cols");
+  let shownCols = [].concat(store.get("cols", [])).filter(c => COLS.includes(c));
+  function renderCols() {
+    COLS.forEach(c => list.classList.toggle("show-" + c, shownCols.includes(c)));
+    colsBox.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", shownCols.includes(b.dataset.col)));
+  }
+  colsBox.addEventListener("click", e => {
+    const b = e.target.closest("[data-col]"); if (!b) return;
+    const c = b.dataset.col;
+    shownCols = shownCols.includes(c) ? shownCols.filter(x => x !== c) : [...shownCols, c];
+    store.set("cols", shownCols);
+    renderCols();
+  });
+  renderCols();
+
   /* ================= search ================= */
   const q = $("q"), qClear = $("qClear");
   const norm = s => s.toLowerCase().replace(/ё/g, "е").trim();
   function filter() {
     const v = norm(q.value);
     let shown = 0, first = true;
-    rows.forEach((r, i) => {
-      const ok = !v || norm(tracks[i].title).includes(v);
+    const inTracks = section === "tracks";
+    // search looks through every volume; without it only the open volume is shown
+    (inTracks ? rows : shopRows).forEach((r, i) => {
+      const ok = inTracks
+        ? (v ? norm(tracks[i].title).includes(v) : tomeOf(i) === tome)
+        : products[i].section === section && (!v || norm(products[i].title).includes(v));
       r.hidden = !ok;
       r.classList.toggle("first", ok && first);
       if (ok) { shown++; first = false; }
@@ -65,7 +125,11 @@
     qClear.hidden = !v;
     $("found").textContent = v ? t("found", { n: shown }) : "";
     $("none").hidden = shown > 0;
-    list.hidden = shown === 0;
+    $("none").textContent = t(v ? "nothingFound" : "comingSoon");
+    list.hidden = !inTracks || shown === 0;
+    shop.hidden = inTracks || shown === 0;
+    colsBox.hidden = !inTracks;
+    $("bar").hidden = !v && shown === 0;
   }
   q.addEventListener("input", filter);
   q.addEventListener("keydown", e => { if (e.key === "Escape" && q.value) { e.stopPropagation(); q.value = ""; filter(); } });
@@ -74,6 +138,8 @@
 
   /* ================= playback ================= */
   function load(i) {
+    // playback moved into another volume: turn the page if the listener was on the old one
+    if (cur >= 0 && section === "tracks" && !q.value && tome === tomeOf(cur) && tome !== tomeOf(i)) show("tracks", tomeOf(i));
     if (cur >= 0) rows[cur].classList.remove("active", "on");
     cur = i;
     audio.src = "audio/" + tracks[i].file;
@@ -87,9 +153,9 @@
     if (i !== cur) return play(i);
     audio.paused ? audio.play() : audio.pause();
   }
-  // next/prev follow the list as currently filtered by search
+  // next/prev go through all volumes in order, or through the search results while searching
   function nextIndex(step) {
-    const vis = visible();
+    const vis = section === "tracks" && q.value.trim() ? visible() : tracks.map((_, i) => i);
     if (!vis.length) return -1;
     if (shuffle && vis.length > 1) {
       let n; do { n = vis[Math.floor(Math.random() * vis.length)]; } while (n === cur);
@@ -118,10 +184,10 @@
   }
 
   /* ================= selection ================= */
-  let picked = new Set(store.get("picked", []).filter(f => tracks.some(tr => tr.file === f)));
+  let picked = new Set(store.get("picked", []).filter(f => goods.some(g => g.file === f)));
   function renderPicked(bump) {
-    rows.forEach((r, i) => {
-      const on = picked.has(tracks[i].file);
+    [...rows, ...shopRows].forEach((r, i) => {
+      const on = picked.has(goods[i].file);
       r.classList.toggle("picked", on);
       r.querySelector(".sel").setAttribute("aria-pressed", on);
     });
@@ -130,8 +196,8 @@
     store.set("picked", [...picked]);
     if (bump) { const b = $("contactBtn"); b.classList.remove("bump"); void b.offsetWidth; b.classList.add("bump"); }
   }
-  function togglePick(i) {
-    const f = tracks[i].file;
+  function togglePick(i) {   // index in goods (tracks come first)
+    const f = goods[i].file;
     picked.has(f) ? picked.delete(f) : picked.add(f);
     renderPicked(true);
   }
@@ -146,6 +212,12 @@
     const i = +row.dataset.i;
     if (e.target.closest(".sel")) return togglePick(i);
     toggle(i);
+  });
+  shop.addEventListener("click", e => {
+    const row = e.target.closest(".row"); if (!row) return;
+    const i = +row.dataset.i, url = products[i].url;
+    if (url && !e.target.closest(".sel")) return void window.open(url, "_blank", "noopener");
+    togglePick(tracks.length + i);
   });
 
   /* ================= controls ================= */
@@ -231,10 +303,10 @@
   const C = S.contacts || {};
 
   function message() {
-    const sel = tracks.filter(tr => picked.has(tr.file));
+    const sel = goods.filter(tr => picked.has(tr.file));
     if (!sel.length) return pick(S.messageEmpty) || "Hi!";
     const lines = sel.map(tr => `— ${tr.title}${desc(tr) ? ` (${desc(tr)})` : ""}`).join("\n");
-    return (pick(S.messageWithTracks) || "{list}").replace("{list}", lines);
+    return (pick(sel.some(g => g.section) ? S.messageWithProducts : S.messageWithTracks) || "{list}").replace("{list}", lines);
   }
 
   const channels = [
@@ -271,7 +343,7 @@
   });
 
   function renderModalList() {
-    const sel = tracks.filter(tr => picked.has(tr.file));
+    const sel = goods.filter(tr => picked.has(tr.file));
     const n = sel.length;
     $("mSub").textContent = n ? t("selected", { n }) : t("nothingSelected");
     $("mList").innerHTML = n
@@ -361,6 +433,21 @@
       `<div class="ctx-sep"></div>` +
       item("download", "down", t("menuDownload"), `<em>${esc(t("free"))}</em>`) +
       item("link", "link", t("menuLink"));
+    placeMenu(x, y);
+    rows.forEach(r => r.classList.toggle("ctx-on", +r.dataset.i === i));
+    ctx.querySelector(".ctx-i").focus({ preventScroll: true });
+  }
+  // small "choose one" menu (sections, volumes); owner = the button it belongs to
+  let menuOwner = null, choose = null;
+  function openChoice(owner, title, options, now, fn, x, y) {
+    closeMenu();
+    menuOwner = owner; choose = fn;
+    ctx.innerHTML = (title ? `<div class="ctx-h">${esc(title)}</div>` : "") + options.map((o, k) =>
+      `<button class="ctx-i ctx-c" role="menuitemradio" aria-checked="${k === now}" data-k="${k}"><i></i><span>${esc(o)}</span></button>`).join("");
+    placeMenu(x, y);
+    ctx.querySelectorAll(".ctx-i")[now]?.focus({ preventScroll: true });
+  }
+  function placeMenu(x, y) {
     ctx.hidden = false;
     // keep inside the viewport; grow from the cursor
     const w = ctx.offsetWidth, h = ctx.offsetHeight, m = 8;
@@ -369,12 +456,10 @@
     ctx.style.top = Math.max(m, top) + "px";
     ctx.style.transformOrigin = `${x - Math.max(m, left)}px ${y - Math.max(m, top)}px`;
     ctx.classList.remove("in"); void ctx.offsetWidth; ctx.classList.add("in");
-    rows.forEach(r => r.classList.toggle("ctx-on", +r.dataset.i === i));
-    ctx.querySelector(".ctx-i").focus({ preventScroll: true });
   }
   function closeMenu() {
     if (ctx.hidden) return;
-    ctx.hidden = true; menuFor = -1;
+    ctx.hidden = true; menuFor = -1; menuOwner = choose = null;
     rows.forEach(r => r.classList.remove("ctx-on"));
   }
 
@@ -392,8 +477,9 @@
 
   ctx.addEventListener("click", e => {
     const b = e.target.closest(".ctx-i"); if (!b) return;
-    const i = menuFor;
+    const i = menuFor, fn = choose;
     closeMenu();
+    if (fn) return fn(+b.dataset.k);
     ({ play: () => toggle(i), pick: () => togglePick(i), download: () => download(i), link: () => copyLink(i) })[b.dataset.act]();
   });
   ctx.addEventListener("keydown", e => {
@@ -410,6 +496,7 @@
   // touch: long-press opens the same menu
   let lp = null;
   list.addEventListener("pointerdown", e => {
+    swallowClick = false;
     if (e.pointerType !== "touch") return;
     const row = e.target.closest(".row"); if (!row) return;
     const x = e.clientX, y = e.clientY;
@@ -419,6 +506,39 @@
   list.addEventListener("pointermove", cancelLp);
   list.addEventListener("pointerup", () => { if (lp) { clearTimeout(lp.timer); lp = null; } });
   list.addEventListener("pointercancel", cancelLp);
+
+  /* ---- line under the name: section menu and volume switch ---- */
+  let reopened = false, tomeHeld = false, tomeTimer = 0;   // reopened: this press just closed the button's own menu
+  document.addEventListener("pointerdown", e => { reopened = !ctx.hidden && !!menuOwner && menuOwner.contains(e.target); }, true);
+  function openSections(e) {
+    e.preventDefault();
+    if (reopened && e.type === "click") { reopened = false; return; }
+    const r = catBtn.getBoundingClientRect();
+    openChoice(catBtn, "", SECTIONS.map(s => t(s)), SECTIONS.indexOf(section),
+      k => { if (SECTIONS[k] !== section) show(SECTIONS[k], tome); }, r.left, r.bottom + 4);
+  }
+  catBtn.addEventListener("click", openSections);
+  catBtn.addEventListener("contextmenu", openSections);
+
+  const openTomes = (x, y) => openChoice(tomeBtn, t("volumes"), Array.from({ length: tomes }, (_, n) => tomeName(n)), tome, n => show("tracks", n), x, y);
+  tomeBtn.addEventListener("click", () => {
+    if (tomeHeld) { tomeHeld = false; return; }
+    if (reopened) { reopened = false; return; }
+    show("tracks", (tome + 1) % tomes);
+  });
+  tomeBtn.addEventListener("contextmenu", e => {
+    e.preventDefault();
+    clearTimeout(tomeTimer);
+    const r = tomeBtn.getBoundingClientRect();
+    openTomes(e.clientX || r.left, e.clientY || r.bottom);
+  });
+  tomeBtn.addEventListener("pointerdown", e => {   // touch: long-press instead of right-click
+    tomeHeld = false;
+    if (e.pointerType !== "touch") return;
+    clearTimeout(tomeTimer);
+    tomeTimer = setTimeout(() => { tomeHeld = true; navigator.vibrate?.(10); openTomes(e.clientX, e.clientY); }, 520);
+  });
+  ["pointerup", "pointercancel", "pointerleave"].forEach(n => tomeBtn.addEventListener(n, () => clearTimeout(tomeTimer)));
 
   document.addEventListener("pointerdown", e => { if (!ctx.hidden && !ctx.contains(e.target)) closeMenu(); }, true);
   addEventListener("scroll", closeMenu, { passive: true });
@@ -446,6 +566,8 @@
     rows.forEach((r, i) => {
       r.querySelector(".sel").setAttribute("aria-label", t("select", { t: tracks[i].title }));
     });
+    shopRows.forEach((r, i) => r.querySelector(".sel").setAttribute("aria-label", t("select", { t: products[i].title })));
+    renderSub();
     repeatLabel();
     muteBtn.setAttribute("aria-label", t(volume === 0 ? "unmute" : "mute"));
     renderChannels();
@@ -486,8 +608,8 @@
     const id = decodeURIComponent(location.hash.slice(1));
     const i = tracks.findIndex(tr => slug(tr) === id);
     if (i < 0) return;
-    q.value = ""; filter();
     load(i);
+    show("tracks", tomeOf(i));
     rows[i].scrollIntoView({ block: "center", behavior: "smooth" });
     rows[i].classList.remove("flash"); void rows[i].offsetWidth; rows[i].classList.add("flash");
   }
