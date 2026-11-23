@@ -6,6 +6,22 @@ window.SETTINGS = {
     email: "merelleynehq@gmail.com",
   },
 
+  // Licenses and fixed prices belong to a profile. A track uses the profile named in its "profile"
+  // field (tracks.json); without one it uses defaultProfile.
+  // price: null = no fixed price: a grey Contact button with the "askHint" text (i18n.js).
+  defaultProfile: "merelleyne",
+  currency: "₽",
+  profiles: {
+    merelleyne: {
+      licenses: [
+        { id: "wav",       name: "Lease WAV",        price: 2000 },
+        { id: "stems",     name: "Lease STEMS",      price: 3500 },
+        { id: "unlimited", name: "Lease UNLIMITED",  price: 5000 },
+        { id: "exclusive", name: "Exclusive Rights", price: null },
+      ],
+    },
+  },
+
   // Prepared Contact message, per site language. {list} is replaced with the selected tracks.
   messageWithTracks: {
     en: "Hi! I'm interested in these arrangements:\n{list}",

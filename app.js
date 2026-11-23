@@ -184,7 +184,17 @@
   }
 
   /* ================= selection ================= */
-  let picked = new Set(store.get("picked", []).filter(f => goods.some(g => g.file === f)));
+  // licenses & prices come from the profile the track belongs to
+  const licensesOf = g => g.section ? [] : (S.profiles?.[g.profile || S.defaultProfile]?.licenses || []);
+  const licenseOf = g => licensesOf(g).find(l => l.id === picked.get(g.file));
+  const money = n => `${String(n).replace(/\B(?=(\d{3})+$)/g, " ")} ${S.currency || ""}`.trim();
+  const licText = l => `${l.name} — ${l.price == null ? t("priceOnRequest") : money(l.price)}`;
+  const total = sel => sel.reduce((sum, g) => sum + (licenseOf(g)?.price || 0), 0);
+
+  // picked: file → license id (null for things without licenses)
+  let picked = new Map([].concat(store.get("picked", []))
+    .map(x => Array.isArray(x) ? x : [x, null])
+    .filter(([f, id]) => { const g = goods.find(g => g.file === f); return g && (!licensesOf(g).length || licensesOf(g).some(l => l.id === id)); }));
   function renderPicked(bump) {
     [...rows, ...shopRows].forEach((r, i) => {
       const on = picked.has(goods[i].file);
@@ -198,8 +208,34 @@
   }
   function togglePick(i) {   // index in goods (tracks come first)
     const f = goods[i].file;
-    picked.has(f) ? picked.delete(f) : picked.add(f);
+    picked.has(f) ? picked.delete(f) : picked.set(f, null);
     renderPicked(true);
+  }
+  // + on a track: choose a license (things without licenses are simply selected)
+  function choosePick(i) {
+    const g = goods[i], lics = licensesOf(g);
+    if (!lics.length) return togglePick(i);
+    const btn = rows[i].querySelector(".sel");
+    const now = licenseOf(g);
+    closeMenu();
+    menuOwner = btn;
+    ctx.innerHTML = `<div class="ctx-h">${esc(g.title)}</div>` +
+      lics.map((l, k) => l.price == null ? "" :
+        `<button class="ctx-i ctx-c" role="menuitemradio" aria-checked="${l === now}" data-k="${k}"><i></i><span>${esc(l.name)}</span><b>${esc(money(l.price))}</b></button>`).join("") +
+      (picked.has(g.file) ? `<div class="ctx-sep"></div><button class="ctx-i" role="menuitem" data-k="-1"><svg viewBox="0 0 24 24">${ico.minus}</svg><span>${esc(t("menuDeselect"))}</span></button>` : "") +
+      lics.map((l, k) => l.price != null ? "" :
+        `<div class="ctx-sep"></div><div class="ctx-x" data-on="${l === now}"><i></i><span>${esc(l.name)}</span>` +
+        `<button class="ctx-ask" role="menuitem" data-k="${k}" aria-describedby="ask${k}">${esc(t("contact"))}</button>` +
+        `<div class="ctx-note"><p id="ask${k}">${esc(t("askHint"))}</p></div></div>`).join("");
+    choose = k => {
+      if (k < 0) picked.delete(g.file); else picked.set(g.file, lics[k].id);
+      renderPicked(true);
+      if (k >= 0 && lics[k].price == null) openModal();
+    };
+    ctx.hidden = false;
+    const r = btn.getBoundingClientRect();
+    placeMenu(r.right - ctx.offsetWidth, r.bottom + 4, 52);   // 52 = room for the hint line
+    (ctx.querySelector('[aria-checked="true"]') || ctx.querySelector(".ctx-i, .ctx-ask")).focus({ preventScroll: true });
   }
   renderPicked(false);
 
@@ -210,7 +246,10 @@
     const row = e.target.closest(".row");
     if (!row) return;
     const i = +row.dataset.i;
-    if (e.target.closest(".sel")) return togglePick(i);
+    if (e.target.closest(".sel")) {
+      if (reopened) { reopened = false; return; }   // second click on + closes its menu
+      return choosePick(i);
+    }
     toggle(i);
   });
   shop.addEventListener("click", e => {
@@ -305,7 +344,8 @@
   function message() {
     const sel = goods.filter(tr => picked.has(tr.file));
     if (!sel.length) return pick(S.messageEmpty) || "Hi!";
-    const lines = sel.map(tr => `— ${tr.title}${desc(tr) ? ` (${desc(tr)})` : ""}`).join("\n");
+    const lines = sel.map(tr => `— ${tr.title}${desc(tr) ? ` (${desc(tr)})` : ""}${licenseOf(tr) ? ` — ${licText(licenseOf(tr))}` : ""}`).join("\n") +
+      (sel.length > 1 && total(sel) ? `\n${t("total", { n: money(total(sel)) })}` : "");
     return (pick(sel.some(g => g.section) ? S.messageWithProducts : S.messageWithTracks) || "{list}").replace("{list}", lines);
   }
 
@@ -345,9 +385,9 @@
   function renderModalList() {
     const sel = goods.filter(tr => picked.has(tr.file));
     const n = sel.length;
-    $("mSub").textContent = n ? t("selected", { n }) : t("nothingSelected");
+    $("mSub").textContent = n ? t("selected", { n }) + (total(sel) ? ` · ${money(total(sel))}` : "") : t("nothingSelected");
     $("mList").innerHTML = n
-      ? sel.map(tr => `<li class="m-item"><span class="n">${esc(tr.title)}</span><span class="k">${esc(desc(tr))}</span>` +
+      ? sel.map(tr => `<li class="m-item"><span class="n">${esc(tr.title)}</span><span class="k">${esc(licenseOf(tr) ? [licenseOf(tr).name, licenseOf(tr).price != null && money(licenseOf(tr).price)].filter(Boolean).join(" · ") : desc(tr))}</span>` +
           `<button class="m-x" data-file="${esc(tr.file)}" aria-label="${esc(t("remove", { t: tr.title }))}"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></li>`).join("")
       : `<li class="m-empty">${t("emptyList")}</li>`;
   }
@@ -447,11 +487,11 @@
     placeMenu(x, y);
     ctx.querySelectorAll(".ctx-i")[now]?.focus({ preventScroll: true });
   }
-  function placeMenu(x, y) {
+  function placeMenu(x, y, extra = 0) {
     ctx.hidden = false;
     // keep inside the viewport; grow from the cursor
     const w = ctx.offsetWidth, h = ctx.offsetHeight, m = 8;
-    const left = Math.min(x, innerWidth - w - m), top = Math.min(y, innerHeight - h - m);
+    const left = Math.min(x, innerWidth - w - m), top = Math.min(y, innerHeight - h - extra - m);
     ctx.style.left = Math.max(m, left) + "px";
     ctx.style.top = Math.max(m, top) + "px";
     ctx.style.transformOrigin = `${x - Math.max(m, left)}px ${y - Math.max(m, top)}px`;
@@ -476,14 +516,14 @@
   }
 
   ctx.addEventListener("click", e => {
-    const b = e.target.closest(".ctx-i"); if (!b) return;
+    const b = e.target.closest(".ctx-i, .ctx-ask"); if (!b) return;
     const i = menuFor, fn = choose;
     closeMenu();
     if (fn) return fn(+b.dataset.k);
-    ({ play: () => toggle(i), pick: () => togglePick(i), download: () => download(i), link: () => copyLink(i) })[b.dataset.act]();
+    ({ play: () => toggle(i), pick: () => picked.has(tracks[i].file) ? togglePick(i) : choosePick(i), download: () => download(i), link: () => copyLink(i) })[b.dataset.act]();
   });
   ctx.addEventListener("keydown", e => {
-    const items = [...ctx.querySelectorAll(".ctx-i")], k = items.indexOf(document.activeElement);
+    const items = [...ctx.querySelectorAll(".ctx-i, .ctx-ask")], k = items.indexOf(document.activeElement);
     if (e.key === "ArrowDown") { e.preventDefault(); items[(k + 1) % items.length].focus(); }
     if (e.key === "ArrowUp") { e.preventDefault(); items[(k - 1 + items.length) % items.length].focus(); }
   });
