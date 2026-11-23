@@ -59,7 +59,8 @@
   const SECTIONS = ["tracks", "software", "samples"];
   const SIZE = S.volumeSize || 10;
   const tomes = Math.max(1, Math.ceil(tracks.length / SIZE));
-  const tomeOf = i => Math.floor(i / SIZE);
+  let order = tracks.map((_, i) => i);      // track numbers in the order shown (changes when sorted)
+  const tomeOf = i => Math.floor(order.indexOf(i) / SIZE);
   const tomeName = n => t("volume", { n: String(n + 1).padStart(2, "0") });
   let section = "tracks", tome = 0;
   const shop = $("shop"), catBtn = $("catBtn"), tomeBtn = $("tomeBtn");
@@ -93,7 +94,7 @@
 
   /* ---- BPM / key / genre switches: show or hide details in the rows ---- */
   const colsBox = $("cols");
-  let genreHeld = false, genreTimer = 0;
+  let colHeld = false, colTimer = 0;
   let shownCols = [].concat(store.get("cols", [])).filter(c => COLS.includes(c));
   function renderCols() {
     COLS.forEach(c => list.classList.toggle("show-" + c, shownCols.includes(c)));
@@ -101,12 +102,46 @@
   }
   colsBox.addEventListener("click", e => {
     const b = e.target.closest("[data-col]"); if (!b) return;
-    if (genreHeld && b.id === "genreBtn") { genreHeld = false; return; }
+    if (colHeld) { colHeld = false; return; }   // long-press already did its job
     const c = b.dataset.col;
     shownCols = shownCols.includes(c) ? shownCols.filter(x => x !== c) : [...shownCols, c];
     store.set("cols", shownCols);
+    if (sort && sort.col === c && !shownCols.includes(c)) setSort(null);
     renderCols();
   });
+
+  /* ---- sorting (right-click / long-press on a switch): all volumes together ---- */
+  let sort = null;   // { col, dir: 1 | -1 }
+  const PITCH = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+  const sortValue = {
+    bpm: tr => tr.bpm || null,
+    key: tr => {   // C, C#, D… major first, then minor
+      const m = /^([A-G])([#b]?)(m?)/.exec(tr.key || "");
+      return m ? (PITCH[m[1]] + (m[2] === "#" ? 1 : m[2] === "b" ? -1 : 0) + 12) % 12 + (m[3] ? 12 : 0) : null;
+    },
+    genre: tr => tr.genre || null,
+  };
+  function setSort(s) {
+    sort = s;
+    order = tracks.map((_, i) => i);
+    if (s) {
+      const val = sortValue[s.col];
+      order.sort((a, b) => {
+        const x = val(tracks[a]), y = val(tracks[b]);
+        if (x === null || y === null) return (x === null) - (y === null) || a - b;   // unknown always last
+        return (x < y ? -1 : x > y ? 1 : 0) * s.dir || a - b;
+      });
+      if (!shownCols.includes(s.col)) { shownCols = [...shownCols, s.col]; store.set("cols", shownCols); }
+    }
+    list.append(...order.map(i => rows[i]));
+    colsBox.querySelectorAll("button").forEach(b => { b.querySelector(".dir").textContent = s && s.col === b.dataset.col ? (s.dir > 0 ? "↑" : "↓") : ""; });
+    renderCols();
+    tome = 0;
+    renderSub();
+    filter();
+    list.classList.remove("swap"); void list.offsetWidth; list.classList.add("swap");
+  }
+  const cycleSort = col => setSort(!sort || sort.col !== col ? { col, dir: 1 } : sort.dir > 0 ? { col, dir: -1 } : null);
   renderCols();
 
   /* ================= search ================= */
@@ -120,7 +155,8 @@
     let shown = 0, first = true;
     const inTracks = section === "tracks";
     // search looks through every volume; without it only the open volume is shown
-    (inTracks ? rows : shopRows).forEach((r, i) => {
+    (inTracks ? order : shopRows.map((_, i) => i)).forEach(i => {
+      const r = (inTracks ? rows : shopRows)[i];
       const ok = inTracks
         ? (filtering() ? (!v || norm(tracks[i].title).includes(v)) && (!genres.size || genres.has(tracks[i].genre)) : tomeOf(i) === tome)
         : products[i].section === section && (!v || norm(products[i].title).includes(v));
@@ -141,7 +177,7 @@
   q.addEventListener("input", filter);
   q.addEventListener("keydown", e => { if (e.key === "Escape" && q.value) { e.stopPropagation(); q.value = ""; filter(); } });
   qClear.addEventListener("click", () => { q.value = ""; filter(); q.focus(); });
-  const visible = () => rows.map((r, i) => r.hidden ? -1 : i).filter(i => i >= 0);
+  const visible = () => order.filter(i => !rows[i].hidden);
 
   /* ================= playback ================= */
   function load(i) {
@@ -151,6 +187,7 @@
     cur = i;
     audio.src = "audio/" + tracks[i].file;
     rows[i].classList.add("active");
+    window.Fire?.attach(rows[i], "audio/" + slug(tracks[i]) + ".bin");
     document.body.classList.add("has-player");
     nowPlaying();
     paint();
@@ -162,7 +199,7 @@
   }
   // next/prev go through all volumes in order, or through the search results while searching
   function nextIndex(step) {
-    const vis = section === "tracks" && filtering() ? visible() : tracks.map((_, i) => i);
+    const vis = section === "tracks" && filtering() ? visible() : order;
     if (!vis.length) return -1;
     if (shuffle && vis.length > 1) {
       let n; do { n = vis[Math.floor(Math.random() * vis.length)]; } while (n === cur);
@@ -267,7 +304,20 @@
   });
 
   /* ================= controls ================= */
-  $("cover").addEventListener("click", () => toggle(cur < 0 ? (visible()[0] ?? 0) : cur));
+  // vinyl: one click = play / pause, double click = random track from any volume
+  let coverTimer = 0;
+  function playRandom() {
+    if (!tracks.length) return;
+    let n; do { n = Math.floor(Math.random() * tracks.length); } while (tracks.length > 1 && n === cur);
+    if (section !== "tracks" || rows[n].hidden) show("tracks", tomeOf(n));
+    play(n);
+  }
+  $("cover").addEventListener("click", e => {
+    const one = () => toggle(cur < 0 ? (visible()[0] ?? 0) : cur);
+    if (!e.detail) return one();                 // keyboard
+    if (coverTimer) { clearTimeout(coverTimer); coverTimer = 0; return playRandom(); }
+    coverTimer = setTimeout(() => { coverTimer = 0; one(); }, 230);
+  });
   $("toggle").addEventListener("click", () => toggle(cur < 0 ? (visible()[0] ?? 0) : cur));
   $("next").addEventListener("click", () => { const n = nextIndex(1); if (n >= 0) play(n); });
   $("prev").addEventListener("click", () => {
@@ -645,13 +695,17 @@
     menuOwner = genreBtn;
     const mark = () => ctx.querySelectorAll(".ctx-c").forEach(b => {
       const k = +b.dataset.k;
-      b.setAttribute("aria-checked", k < 0 ? !genres.size : genres.has(allGenres[k]));
+      b.setAttribute("aria-checked", k < -1 ? !!sort && sort.col === "genre" && sort.dir === (k === -2 ? 1 : -1) : k < 0 ? !genres.size : genres.has(allGenres[k]));
     });
     const item = (k, name, n) => `<button class="ctx-i ctx-c" role="menuitemcheckbox" data-k="${k}"><i></i><span>${esc(name)}</span><b>${n}</b></button>`;
-    ctx.innerHTML = item(-1, t("allGenres"), tracks.length) + '<div class="ctx-sep"></div>' +
+    const sortItem = (k, name) => `<button class="ctx-i ctx-c" role="menuitemradio" data-k="${k}"><i></i><span>${esc(name)}</span></button>`;
+    ctx.innerHTML = sortItem(-2, t("sortAZ")) + sortItem(-3, t("sortZA")) + '<div class="ctx-sep"></div>' + item(-1, t("allGenres"), tracks.length) + '<div class="ctx-sep"></div>' +
       allGenres.map((g, k) => item(k, g, tracks.filter(tr => tr.genre === g).length)).join("");
     choose = k => {
-      if (k < 0) genres.clear();
+      if (k < -1) {
+        const dir = k === -2 ? 1 : -1;
+        setSort(sort && sort.col === "genre" && sort.dir === dir ? null : { col: "genre", dir });
+      } else if (k < 0) genres.clear();
       else genres.has(allGenres[k]) ? genres.delete(allGenres[k]) : genres.add(allGenres[k]);
       mark();
       filter();
@@ -661,19 +715,23 @@
     placeMenu(x, y);
     ctx.querySelector(".ctx-i").focus({ preventScroll: true });
   }
-  genreBtn.addEventListener("contextmenu", e => {
-    e.preventDefault();
-    clearTimeout(genreTimer);
-    const r = genreBtn.getBoundingClientRect();
-    openGenres(e.clientX || r.left, e.clientY || r.bottom);
+  colsBox.querySelectorAll("button").forEach(btn => {
+    const act = (x, y) => btn === genreBtn ? openGenres(x, y) : cycleSort(btn.dataset.col);
+    btn.addEventListener("contextmenu", e => {
+      e.preventDefault();
+      clearTimeout(colTimer);
+      if (colHeld) return;                       // the long-press timer was first
+      const r = btn.getBoundingClientRect();
+      if (e.pointerType === "touch") colHeld = true;
+      act(e.clientX || r.left, e.clientY || r.bottom);
+    });
+    btn.addEventListener("pointerdown", e => {   // touch: long-press instead of right-click
+      colHeld = false;
+      clearTimeout(colTimer);
+      if (e.pointerType === "touch") colTimer = setTimeout(() => { colHeld = true; navigator.vibrate?.(10); act(e.clientX, e.clientY); }, 520);
+    });
+    ["pointerup", "pointercancel", "pointerleave"].forEach(n => btn.addEventListener(n, () => clearTimeout(colTimer)));
   });
-  genreBtn.addEventListener("pointerdown", e => {
-    genreHeld = false;
-    if (e.pointerType !== "touch") return;
-    clearTimeout(genreTimer);
-    genreTimer = setTimeout(() => { genreHeld = true; navigator.vibrate?.(10); openGenres(e.clientX, e.clientY); }, 520);
-  });
-  ["pointerup", "pointercancel", "pointerleave"].forEach(n => genreBtn.addEventListener(n, () => clearTimeout(genreTimer)));
 
   function openSections(e) {
     e.preventDefault();
@@ -766,6 +824,7 @@
   });
 
   /* ================= start ================= */
+  window.Fire?.init(audio);
   setVol(volume);
   applyLang(false);
 

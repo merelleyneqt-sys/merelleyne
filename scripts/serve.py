@@ -96,8 +96,8 @@ def write_tracks(tracks):
 def remove_unused_audio():
     """Delete mp3s no track uses. Only called on Publish; files stay recoverable from git history."""
     used = {t["file"] for t in read_tracks()}
-    for p in AUDIO.glob("*.mp3"):
-        if p.name not in used:
+    for p in [*AUDIO.glob("*.mp3"), *AUDIO.glob("*.bin")]:
+        if p.with_suffix(".mp3").name not in used:
             p.unlink()
 
 
@@ -212,6 +212,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                     bpm = a["bpm"]; guess.append("bpm")
             except Exception as e:  # the upload itself is fine
                 note = str(e)
+        py = ROOT / ".venv" / "bin" / "python"   # fire visualizer data; without it the site shows plain bars
+        if py.exists():
+            subprocess.run([str(py), str(ROOT / "scripts" / "build_spectrum.py"), str(out)], capture_output=True, timeout=180)
         self.send_json({"title": title, "key": key, "bpm": bpm, "guess": guess, "note": note,
                         "added": datetime.datetime.now().isoformat(timespec="milliseconds"),
                         "file": out.name, "duration": duration(out)})

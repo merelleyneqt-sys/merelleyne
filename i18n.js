@@ -20,6 +20,8 @@ window.I18N = {
     colKey: "Key",
     colGenre: "Genre",
     allGenres: "All genres",
+    sortAZ: "Sort A–Z",
+    sortZA: "Sort Z–A",
     // request form
     reqTitle: "Request",
     reqHint: "Leave at least one way to reach you",
@@ -100,6 +102,8 @@ window.I18N = {
     colKey: "Тональность",
     colGenre: "Жанр",
     allGenres: "Все жанры",
+    sortAZ: "Сортировать А–Я",
+    sortZA: "Сортировать Я–А",
     reqTitle: "Заявка",
     reqHint: "Оставьте хотя бы один контакт для связи",
     reqComment: "Комментарий (необязательно)",

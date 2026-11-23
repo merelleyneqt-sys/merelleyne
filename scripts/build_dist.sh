@@ -3,7 +3,7 @@
 cd "$(dirname "$0")/.."
 mkdir -p dist
 find dist -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
-cp index.html style.css app.js settings.js tracks.js i18n.js dist/
+cp index.html style.css app.js settings.js tracks.js i18n.js fire.js dist/
 [ -f cover.jpg ] && cp cover.jpg dist/
 cp -R audio dist/
 touch dist/.nojekyll   # GitHub Pages: serve files as-is
