@@ -46,7 +46,7 @@ _Last updated: 2026-11-23. Talk to the user in Russian, simply; site UI stays En
 3. **Contact → Email opens a form (asked 2026-11-23 "can we?", NOT started).** Minimal window: visitor's contacts (Telegram / Instagram / VK / Email, at least one), optional comment, Send. The user gets a templated letter at the contact email: selected tracks, licenses, prices, total, visitor's contacts; sent from the SITE's own address (not the visitor's, not the user's). Replaces mailto.
    - GitHub Pages can't send mail. Option A (no domain): form service (Web3Forms / Formspree), sender is the service's address; user must sign up and confirm the email himself. Option B (real own address, e.g. orders@domain): buy a domain + mail-sending service (e.g. Resend) + tiny server function (e.g. Cloudflare Worker) holding the secret key. Plan: A first with the form built so that only the endpoint changes for B. Never put secrets in the public repo.
    - Needs: honeypot + rate limit, "sent" / error states (keep typed text; fall back to mailto), EN/RU texts, consent checkbox + short privacy note (personal data). Server should recompute prices, since a visitor can alter what the page sends.
-   - Waiting for the user: own domain or start without it.
+   - User decided 2026-11-23: start WITHOUT a domain (option A). Waiting for: "do it" + the access key from the form service (user signs up himself).
 
 ## Future feature — "Sold" tracks (user request, NOT started; do after hosting is settled)
 - From the admin page (or, later, a "playlist edit mode" on his own profile page) the user can **mark a track as sold**.
