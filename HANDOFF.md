@@ -46,6 +46,9 @@ _Last updated: 2026-11-23. Talk to the user in Russian, simply; site UI stays En
 ## To do — recorded 2026-11-23, NOT started (implement when told)
 1. **Double-click on the vinyl** plays a random track from ANY volume (not only the open one). The page should turn to that track's volume (our assumption). Avoid repeating the current track. Single click stays play/pause: a double click must not visibly toggle pause/play first (short wait ~220 ms before the single action, or undo it). Phones: double-tap; make sure it doesn't zoom (`touch-action: manipulation`). Ignore search / genre filter (our assumption: any track of all volumes; Software / Sample packs have no audio).
 
+2. **Sorting by right-click on BPM / Key / Genre** (long-press on phones): shows that column AND sorts the list by it. Left click stays plain show/hide. Proposed: right-click cycles ascending → descending → off, small arrow ↑/↓ next to the active button, one sort at a time; hiding the column turns its sort off. Sort covers ALL volumes (then split into volumes by the sorted order?) — ASK: whole catalogue or inside the open volume. Key order: musical (C, C#, D…), minor after major; empty values last. Player next/prev follow the visible order.
+   - Conflict: right-click on Genre already opens the genre menu. Proposed: keep the menu, add "Sort A–Z / Z–A" at its top. ASK.
+
 ## Future feature — "Sold" tracks (user request, NOT started; do after hosting is settled)
 - From the admin page (or, later, a "playlist edit mode" on his own profile page) the user can **mark a track as sold**.
 - On the public site a sold track's **+ (add to selection / "cart") button turns grey and inactive**. Clicking it shows a message that **this track is already sold** (EN + RU texts in `i18n.js`, e.g. "This track is already sold" / "Этот трек уже продан").
