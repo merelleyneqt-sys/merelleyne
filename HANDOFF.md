@@ -34,7 +34,7 @@ _Last updated: 2026-11-23. Talk to the user in Russian, simply; site UI stays En
 - Vol. switch and Arrangements / Software / Sample packs menu, see CLAUDE.md. Software and sample packs are empty: waiting for the user's items (name, link).
 - Not tested: real long-press on a phone.
 
-- Auto BPM/key detection in the admin: done, see CLAUDE.md. 31 guessed values in tracks.json await the user's confirmation. Auto genre: not started, needs the user's genre list.
+- Auto BPM/key detection in the admin: done, see CLAUDE.md. Guessed BPM accepted at the user's request; 19 or so guessed keys still await confirmation. Auto genre (user: unsure → "Alternative") waits for the user's OK to download larger_clap_music (776 MB) + PyTorch.
 - Possibly wrong labels to check with the user: Velvet Skies says 116, analysis hears 106; Radiant Abyss 125 vs 123; Arcane Bm vs B.
 
 ## Future feature — "Sold" tracks (user request, NOT started; do after hosting is settled)
