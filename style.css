@@ -557,3 +557,38 @@ body.has-player .toast { bottom: 118px; }
 .ctx-c i { width: 5px; height: 5px; border-radius: 50%; flex: none; }
 .ctx-c[aria-checked="true"] i { background: var(--red); }
 @media (hover: none) { .sub button { padding: 14px 8px; margin: -14px 0; } .sub button::after { bottom: 10px; } }
+
+/* ---------- BPM / key / genre switches + details in rows ---------- */
+.found { flex: none; white-space: nowrap; }
+.cols { display: flex; gap: 2px; margin-right: -8px; }
+.cols[hidden] { display: none; }
+.cols button {
+  position: relative; padding: 8px; white-space: nowrap;
+  color: var(--mute); font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+  transition: color .2s; -webkit-tap-highlight-color: transparent;
+}
+.cols button:hover, .cols button:focus-visible, .cols button[aria-pressed="true"] { color: var(--ink); outline: none; }
+.cols button:focus-visible { text-decoration: underline; text-underline-offset: 4px; }
+.cols button::after {
+  content: ""; position: absolute; left: 50%; right: 50%; bottom: 4px; height: 1px; background: var(--red);
+  transition: left .3s cubic-bezier(.2, .8, .2, 1), right .3s cubic-bezier(.2, .8, .2, 1);
+}
+.cols button[aria-pressed="true"]::after { left: 8px; right: 8px; }
+.info { display: flex; align-items: center; gap: 14px; }
+.info .title { flex: 1; min-width: 0; }
+.cells { display: flex; flex: none; gap: 10px; color: var(--mute); font-size: 10.5px; letter-spacing: .06em; }
+.cell { display: none; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cell.nil { opacity: .4; }
+.c-bpm, .c-key { width: 34px; }
+.c-genre { width: 128px; }
+.show-bpm .c-bpm, .show-key .c-key, .show-genre .c-genre { display: block; animation: fade .3s ease; }
+@media (max-width: 540px) { /* phone: switches under the search, details under the title */
+  .bar { flex-wrap: wrap; gap: 4px; }
+  .cols { margin: 0 -8px; }
+  .info { flex-direction: column; align-items: stretch; gap: 5px; }
+  .info .title { flex: none; }
+  .cells { gap: 12px; min-width: 0; }
+  .cell { width: auto; text-align: left; }
+  .cells .cell.nil { display: none; }
+  .list:not(.show-bpm):not(.show-key):not(.show-genre) .cells, .cells:not(:has(.cell:not(.nil))) { display: none; }
+}

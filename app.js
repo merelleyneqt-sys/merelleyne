@@ -38,10 +38,13 @@
   /* ================= list ================= */
   const selIcon = '<svg viewBox="0 0 24 24"><path class="i-plus" d="M12 5v14M5 12h14"/><path class="i-check" d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 
+  const COLS = ["bpm", "key", "genre"];
+
   list.innerHTML = tracks.map((tr, i) => `
       <li class="row" data-i="${i}" id="t-${esc(slug(tr))}">
         <div class="info">
           <div class="title">${esc(tr.title)}<span class="eq" aria-hidden="true"><i></i><i></i><i></i></span></div>
+          <div class="cells">${COLS.map(c => `<span class="cell c-${c}${tr[c] ? "" : " nil"}">${esc(tr[c] || "—")}</span>`).join("")}</div>
         </div>
         <div class="btns">
           <button class="sel" aria-pressed="false">${selIcon}</button>
@@ -85,6 +88,22 @@
     el.classList.remove("swap"); void el.offsetWidth; el.classList.add("swap");
   }
 
+  /* ---- BPM / key / genre switches: show or hide details in the rows ---- */
+  const colsBox = $("cols");
+  let shownCols = [].concat(store.get("cols", [])).filter(c => COLS.includes(c));
+  function renderCols() {
+    COLS.forEach(c => list.classList.toggle("show-" + c, shownCols.includes(c)));
+    colsBox.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", shownCols.includes(b.dataset.col)));
+  }
+  colsBox.addEventListener("click", e => {
+    const b = e.target.closest("[data-col]"); if (!b) return;
+    const c = b.dataset.col;
+    shownCols = shownCols.includes(c) ? shownCols.filter(x => x !== c) : [...shownCols, c];
+    store.set("cols", shownCols);
+    renderCols();
+  });
+  renderCols();
+
   /* ================= search ================= */
   const q = $("q"), qClear = $("qClear");
   const norm = s => s.toLowerCase().replace(/ё/g, "е").trim();
@@ -107,6 +126,7 @@
     $("none").textContent = t(v ? "nothingFound" : "comingSoon");
     list.hidden = !inTracks || shown === 0;
     shop.hidden = inTracks || shown === 0;
+    colsBox.hidden = !inTracks;
     $("bar").hidden = !v && shown === 0;
   }
   q.addEventListener("input", filter);

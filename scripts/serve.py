@@ -67,7 +67,8 @@ def write_tracks(tracks):
         except ValueError:
             bpm = None
         clean.append({"title": str(t.get("title", "")).strip() or f, "key": str(t.get("key", "")).strip(),
-                      "bpm": bpm, "file": f})
+                      "bpm": bpm,
+                      "genre": str(t.get("genre") or "").strip(), "file": f})
     TRACKS_JSON.write_text("[\n" + ",\n".join("  " + json.dumps(t, ensure_ascii=False) for t in clean) + "\n]\n")
     subprocess.run([sys.executable, str(ROOT / "scripts" / "build_tracks.py")], check=True, capture_output=True)
     # Saving never deletes audio files; unused ones are cleaned up only on Publish.

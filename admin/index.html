@@ -53,7 +53,7 @@
     h2 { margin: 34px 0 10px; color: var(--mute); font-weight: 400; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; display: flex; justify-content: space-between; }
 
     .list { list-style: none; border: 1px solid var(--line); background: rgba(12,12,12,.9); }
-    .row { display: grid; grid-template-columns: 30px 1fr 64px 64px 44px auto; align-items: center; gap: 10px; padding: 8px 12px; border-top: 1px solid var(--line); }
+    .row { display: grid; grid-template-columns: 30px 1fr 56px 56px 104px 40px auto; align-items: center; gap: 10px; padding: 8px 12px; border-top: 1px solid var(--line); }
     .row:first-child { border-top: 0; }
     .row.new { animation: flash 1.2s ease; }
     @keyframes flash { from { background: rgba(179,20,28,.25); } }
@@ -110,6 +110,7 @@
     The admin only works on your Mac.<br>Double-click <code>Admin.command</code> in the project folder.
   </div>
 
+  <datalist id="genres"></datalist>
   <audio id="audio"></audio>
 
   <script>
@@ -131,6 +132,7 @@
     };
 
     function render(flashFile) {
+      $("genres").innerHTML = [...new Set(tracks.map(t => t.genre).filter(Boolean))].sort().map(g => `<option value="${esc(g)}">`).join("");
       $("count").textContent = tracks.length ? `${tracks.length}` : "";
       if (!tracks.length) { list.innerHTML = '<li class="empty">No tracks yet — drop some audio above.</li>'; return; }
       list.innerHTML = tracks.map((t, i) => `
@@ -139,6 +141,7 @@
           <input class="title" data-f="title" value="${esc(t.title)}" aria-label="Title">
           <input class="small" data-f="key" value="${esc(t.key)}" placeholder="Key" aria-label="Key">
           <input class="small" data-f="bpm" value="${esc(t.bpm)}" placeholder="BPM" inputmode="numeric" aria-label="BPM">
+          <input class="small" data-f="genre" value="${esc(t.genre)}" placeholder="Genre" aria-label="Genre" list="genres">
           <span class="dur">${fmt(t.duration)}</span>
           <div class="tools">
             <button class="ib" data-act="up" ${i === 0 ? "disabled" : ""} aria-label="Move up">${icons.up}</button>

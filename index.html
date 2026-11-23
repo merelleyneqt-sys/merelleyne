@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <!-- bump ?v= when css/js change so browsers (Safari) don't show a stale copy -->
-  <link rel="stylesheet" href="style.css?v=19">
+  <link rel="stylesheet" href="style.css?v=20">
 </head>
 <body>
   <div class="lang" id="lang" role="group" aria-label="Language" data-i18n-aria="language">
@@ -50,11 +50,17 @@
       <label class="search">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg>
         <input id="q" type="search" placeholder="Search" autocomplete="off" spellcheck="false" aria-label="Search tracks" data-i18n-ph="search" data-i18n-aria="searchLabel">
+        <span class="found" id="found"></span>
         <button class="q-clear" id="qClear" type="button" aria-label="Clear search" data-i18n-aria="clearSearch" hidden>
           <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
         </button>
       </label>
-      <span class="found" id="found"></span>
+      <!-- show / hide details in the rows -->
+      <div class="cols" id="cols" role="group" data-i18n-aria="showDetails">
+        <button type="button" data-col="bpm" data-i18n="colBpm">BPM</button>
+        <button type="button" data-col="key" data-i18n="colKey">Key</button>
+        <button type="button" data-col="genre" data-i18n="colGenre">Genre</button>
+      </div>
     </div>
 
     <ol class="list" id="list"></ol>
@@ -150,9 +156,9 @@
   <div class="ctx" id="ctx" role="menu" hidden></div>
 
   <audio id="audio" preload="none"></audio>
-  <script src="i18n.js?v=19"></script>
-  <script src="settings.js?v=19"></script>
-  <script src="tracks.js?v=19"></script>
-  <script src="app.js?v=19"></script>
+  <script src="i18n.js?v=20"></script>
+  <script src="settings.js?v=20"></script>
+  <script src="tracks.js?v=20"></script>
+  <script src="app.js?v=20"></script>
 </body>
 </html>

@@ -30,9 +30,11 @@ _Last updated: 2026-11-23. Talk to the user in Russian, simply; site UI stays En
 - **Right-click menu** on a track (long-press on phones): Play/Pause, Add/Remove selection, **Download tagged MP3 — Free** (downloads `audio/<file>` as `Merelleyne - Title (tagged).mp3`), Copy link (`site/#<file-slug>` → page scrolls to the track and loads it in the player, no autoplay). Toast "Link copied".
   - ⚠ The free download gives whatever is in `audio/` — for the 19 untagged test tracks that is the **full untagged version**.
 
-## 2026-11-23: volumes + sections (`?v=19`) — committed locally, NOT pushed/deployed (asked the user)
+## 2026-11-23: volumes + sections + BPM/Key/Genre switches (`?v=20`) — committed locally, NOT pushed/deployed (asked the user)
 - Vol. switch and Arrangements / Software / Sample packs menu, see CLAUDE.md. Software and sample packs are empty: waiting for the user's items (name, link).
 - Not tested: real long-press on a phone.
+
+- Auto-detecting BPM / key / genre of uploads (in the local admin): discussed only, waiting for the user's go-ahead, genre list.
 
 ## Future feature — "Sold" tracks (user request, NOT started; do after hosting is settled)
 - From the admin page (or, later, a "playlist edit mode" on his own profile page) the user can **mark a track as sold**.
