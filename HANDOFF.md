@@ -40,7 +40,7 @@ _Last updated: 2026-11-23. Talk to the user in Russian, simply; site UI stays En
 - License menu on + with prices (`?v=24`): published 2026-11-23. Old saved selections without a license are dropped.
 
 ## 2026-11-23, `?v=26`: genre menu, lower search bar, request form — committed, NOT published
-- Web3Forms key connected (user registered merelleynehq@gmail.com). Real test request from localhost accepted by the service (200, success); user has not yet confirmed the letter arrived. 250 letters/month free; requests stored up to 3 years. No own domain for now (user's choice).
+- Web3Forms key connected (user registered merelleynehq@gmail.com). Real test request from localhost accepted by the service (200, success); the letter arrived but landed in Gmail Spam; told the user to mark "not spam" + add a filter for the sender; own domain is the lasting fix. 250 letters/month free; requests stored up to 3 years. No own domain for now (user's choice).
 - Not tested: real long-press on a phone.
 
 ## Future feature — "Sold" tracks (user request, NOT started; do after hosting is settled)
