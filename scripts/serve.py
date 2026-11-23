@@ -49,6 +49,18 @@ def duration(path):
     return round(float(out))
 
 
+def analyze(path):
+    """BPM and key guessed from the sound. Raises if the analyzer isn't installed or fails."""
+    py = ROOT / ".venv" / "bin" / "python"
+    if not py.exists():
+        raise RuntimeError("Analyzer is not installed (see scripts/analyze.py)")
+    r = subprocess.run([str(py), str(ROOT / "scripts" / "analyze.py"), str(path)],
+                       capture_output=True, text=True, timeout=180)
+    if r.returncode != 0:
+        raise RuntimeError("Analysis failed: " + r.stderr.strip()[-200:])
+    return json.loads(r.stdout.strip().splitlines()[-1])
+
+
 def read_tracks():
     return json.loads(TRACKS_JSON.read_text())
 
@@ -66,9 +78,13 @@ def write_tracks(tracks):
             bpm = int(bpm) if bpm is not None and str(bpm).strip() else None
         except ValueError:
             bpm = None
-        clean.append({"title": str(t.get("title", "")).strip() or f, "key": str(t.get("key", "")).strip(),
+        key = str(t.get("key") or "").strip()
+        guess = t.get("guess") if isinstance(t.get("guess"), list) else []
+        guess = [g for g in ("key", "bpm") if g in guess and (key if g == "key" else bpm)]
+        clean.append({"title": str(t.get("title", "")).strip() or f, "key": key,
                       "bpm": bpm,
-                      "genre": str(t.get("genre") or "").strip(), "file": f})
+                      "genre": str(t.get("genre") or "").strip(), "file": f,
+                      **({"guess": guess} if guess else {})})   # guess = found by analysis, not confirmed yet
     TRACKS_JSON.write_text("[\n" + ",\n".join("  " + json.dumps(t, ensure_ascii=False) for t in clean) + "\n]\n")
     subprocess.run([sys.executable, str(ROOT / "scripts" / "build_tracks.py")], check=True, capture_output=True)
     # Saving never deletes audio files; unused ones are cleaned up only on Publish.
@@ -140,6 +156,12 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 n = int(self.headers.get("Content-Length", 0))
                 tracks = write_tracks(json.loads(self.rfile.read(n) or b"[]"))
                 return self.send_json(tracks)
+            if path == "/api/analyze":
+                n = int(self.headers.get("Content-Length", 0))
+                f = AUDIO / pathlib.Path(str(json.loads(self.rfile.read(n))["file"])).name
+                if not f.is_file():
+                    return self.send_json({"error": "No such track"}, 404)
+                return self.send_json(analyze(f))
             if path == "/api/publish":
                 return self.publish()
             self.send_json({"error": "not found"}, 404)
@@ -177,7 +199,19 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 out.unlink(missing_ok=True)
                 return self.send_json({"error": "Could not convert audio: " + r.stderr.strip()[-300:]}, 400)
 
-        self.send_json({"title": title, "key": key, "bpm": bpm, "file": out.name, "duration": duration(out)})
+        # the filename wins; analysis only fills what it doesn't say
+        guess, note = [], ""
+        if not key or not bpm:
+            try:
+                a = analyze(out)
+                if not key and a["key"]:
+                    key = a["key"]; guess.append("key")
+                if not bpm and a["bpm"]:
+                    bpm = a["bpm"]; guess.append("bpm")
+            except Exception as e:  # the upload itself is fine
+                note = str(e)
+        self.send_json({"title": title, "key": key, "bpm": bpm, "guess": guess, "note": note,
+                        "file": out.name, "duration": duration(out)})
 
     def publish(self):
         remove_unused_audio()

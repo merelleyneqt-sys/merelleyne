@@ -30,7 +30,8 @@ Static one-page site: a playlist of Merelleyne's arrangements for sale. Plain HT
 ## Admin (adding tracks) — local only, by design
 - User chose: admin runs only on this Mac, no online login. Double-click `Admin.command` → starts `scripts/serve.py` and opens http://localhost:8765/admin/.
 - Admin page `admin/index.html`: drop MP3/WAV/AIFF/FLAC → server converts to 160k MP3 in `audio/`, guesses title/key/BPM from the filename (`Name (Gm_135BPM)`, `Name (125BPM)`, `NAME_151`), new track goes on top. Edit title/key/BPM inline (autosave), reorder ↑↓, delete.
-- API (in serve.py, bound to 127.0.0.1, rejects foreign Origin): GET/POST `/api/tracks`, POST `/api/upload` (raw body + `X-Filename`), POST `/api/publish`.
+- Auto BPM/key: `scripts/analyze.py` (essentia, in `.venv`, gitignored; setup line in the file). Upload: filename wins, analysis fills the rest; "Analyze" fills empty fields of all tracks. Guessed values get `"guess": ["key","bpm"]` in tracks.json, are red with "?" in the admin (÷2 / ×2 for BPM; click "?" or edit = confirmed; "Confirm all") and `build_tracks.py` keeps them OFF the site until confirmed. Genre is manual. Measured: BPM 15/18 exact, key 9/11.
+- API (in serve.py, bound to 127.0.0.1, rejects foreign Origin): GET/POST `/api/tracks`, POST `/api/upload` (raw body + `X-Filename`), POST `/api/analyze` ({file}), POST `/api/publish`.
 - Saving never deletes audio; Publish removes unused mp3s, git-commits audio/tracks.json/tracks.js/cover.jpg, pushes main, then runs `scripts/deploy.sh`.
 - `admin/` must NOT be deployed publicly (it's harmless without the API, but keep it out of the deploy).
 ## Handoff

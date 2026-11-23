@@ -63,6 +63,17 @@
     .row .title { font: 20px/1.1 var(--serif); }
     .row .small { font-size: 11px; text-align: center; }
     .row .small::placeholder { color: rgba(236,235,231,.25); }
+    .fld { position: relative; }
+    .fld.guess input { color: #e0525a; padding-right: 18px; }
+    .fld .ok { position: absolute; right: 0; top: 3px; width: 18px; height: 22px; color: #e0525a; font-size: 11px; }
+    .fld .ok:hover { color: var(--ink); }
+    .fld .x2 { display: flex; justify-content: center; gap: 2px; }
+    .fld .x2 button { padding: 0 5px; color: var(--mute); font-size: 10px; line-height: 14px; }
+    .fld .x2 button:hover { color: var(--ink); }
+    h2 .r { display: flex; gap: 16px; }
+    h2 button { letter-spacing: inherit; text-transform: inherit; }
+    h2 button:hover { color: var(--ink); }
+    h2 button:disabled { opacity: .4; pointer-events: none; }
     .dur { color: var(--mute); font-size: 10.5px; text-align: right; }
     .ib { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid rgba(236,235,231,.2); }
     .ib:hover { border-color: var(--ink); }
@@ -79,7 +90,7 @@
 
     @media (max-width: 620px) {
       .row { grid-template-columns: 30px 1fr auto; }
-      .row .small, .dur { display: none; }
+      .row .small, .fld, .dur { display: none; }
     }
   </style>
 </head>
@@ -101,7 +112,7 @@
     </label>
     <ul class="queue" id="queue"></ul>
 
-    <h2><span>Tracks — shown on the site in this order</span><span id="count"></span></h2>
+    <h2><span>Tracks — shown on the site in this order</span><span class="r"><button id="analyze" title="Guess missing BPM and key from the sound">Analyze</button><button id="confirmAll" title="Accept every red value">Confirm all</button><span id="count"></span></span></h2>
     <ul class="list" id="list"></ul>
   </main>
 
@@ -131,7 +142,18 @@
       del: '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',
     };
 
+    const guessed = (t, f) => (t.guess || []).includes(f);
+    const confirmField = (t, f) => { t.guess = (t.guess || []).filter(x => x !== f); };
+    // red value with "?" = guessed from the sound; click "?" or edit it to confirm
+    const field = (t, f, name) => `<div class="fld${guessed(t, f) ? " guess" : ""}" data-fld="${f}">${fieldIn(t, f, name)}</div>`;
+    const fieldIn = (t, f, name) =>
+      `<input class="small" data-f="${f}" value="${esc(t[f])}" placeholder="${name}" aria-label="${name}"${f === "bpm" ? ' inputmode="numeric"' : ""}>` +
+      (guessed(t, f) ? `<button class="ok" data-act="ok" data-of="${f}" title="Guessed — click if it is correct" aria-label="Confirm ${name}">?</button>` +
+        (f === "bpm" ? '<div class="x2"><button data-act="half" title="Half">÷2</button><button data-act="dbl" title="Double">×2</button></div>' : "") : "");
+    function tools() { $("confirmAll").hidden = !tracks.some(t => (t.guess || []).length); }
+
     function render(flashFile) {
+      tools();
       $("genres").innerHTML = [...new Set(tracks.map(t => t.genre).filter(Boolean))].sort().map(g => `<option value="${esc(g)}">`).join("");
       $("count").textContent = tracks.length ? `${tracks.length}` : "";
       if (!tracks.length) { list.innerHTML = '<li class="empty">No tracks yet — drop some audio above.</li>'; return; }
@@ -139,8 +161,8 @@
         <li class="row${t.file === flashFile ? " new" : ""}" data-i="${i}">
           <button class="ib ${playing === t.file && !audio.paused ? "on" : ""}" data-act="play" aria-label="Preview">${playing === t.file && !audio.paused ? icons.pause : icons.play}</button>
           <input class="title" data-f="title" value="${esc(t.title)}" aria-label="Title">
-          <input class="small" data-f="key" value="${esc(t.key)}" placeholder="Key" aria-label="Key">
-          <input class="small" data-f="bpm" value="${esc(t.bpm)}" placeholder="BPM" inputmode="numeric" aria-label="BPM">
+          ${field(t, "key", "Key")}
+          ${field(t, "bpm", "BPM")}
           <input class="small" data-f="genre" value="${esc(t.genre)}" placeholder="Genre" aria-label="Genre" list="genres">
           <span class="dur">${fmt(t.duration)}</span>
           <div class="tools">
@@ -175,12 +197,25 @@
     list.addEventListener("input", e => {
       const row = e.target.closest(".row"), f = e.target.dataset.f;
       if (!row || !f) return;
-      tracks[+row.dataset.i][f] = e.target.value;
+      const tr = tracks[+row.dataset.i];
+      tr[f] = e.target.value;
+      if (guessed(tr, f)) {          // typing over a guess confirms it
+        confirmField(tr, f);
+        const box = e.target.closest(".fld");
+        box.classList.remove("guess");
+        box.querySelectorAll(".ok, .x2").forEach(n => n.remove());
+        tools();
+      }
       saveSoon();
     });
     list.addEventListener("click", async e => {
       const b = e.target.closest("[data-act]"); if (!b) return;
       const i = +b.closest(".row").dataset.i, t = tracks[i];
+      if (b.dataset.act === "ok") { confirmField(t, b.dataset.of); render(); await save(); return; }
+      if (b.dataset.act === "half" || b.dataset.act === "dbl") {
+        t.bpm = Math.round(b.dataset.act === "half" ? t.bpm / 2 : t.bpm * 2);
+        render(); await save(); return;
+      }
       if (b.dataset.act === "play") {
         if (playing === t.file && !audio.paused) audio.pause();
         else { if (playing !== t.file) { audio.src = "/audio/" + t.file; playing = t.file; } audio.play(); }
@@ -205,7 +240,7 @@
     async function upload(files) {
       for (const file of files) {
         const li = document.createElement("li");
-        li.innerHTML = `<span>${esc(file.name)}</span><span class="dots">Converting</span>`;
+        li.innerHTML = `<span>${esc(file.name)}</span><span class="dots">Converting & analyzing</span>`;
         $("queue").prepend(li);
         try {
           const t = await api("/api/upload", { method: "POST", headers: { "X-Filename": encodeURIComponent(file.name) }, body: file });
@@ -213,6 +248,7 @@
           render(t.file);
           await save();
           li.remove();
+          if (t.note) status(t.note, true);
         } catch (e) {
           li.classList.add("err");
           li.lastElementChild.className = "";
@@ -228,6 +264,38 @@
     // dropping a file anywhere shouldn't open it in the browser
     window.addEventListener("dragover", e => e.preventDefault());
     window.addEventListener("drop", e => { e.preventDefault(); if (!drop.contains(e.target)) upload([...e.dataTransfer.files]); });
+
+    /* ---- analyze: fill missing BPM / key ---- */
+    $("analyze").addEventListener("click", async () => {
+      const b = $("analyze"), todo = tracks.filter(t => !t.key || !t.bpm).map(t => t.file);
+      if (!todo.length) return status("Nothing to analyze — every track has BPM and key");
+      b.disabled = true;
+      let n = 0, filled = 0, err = "";
+      for (const file of todo) {
+        status(`Analyzing ${++n} / ${todo.length}…`);
+        try {
+          const a = await api("/api/analyze", { method: "POST", body: JSON.stringify({ file }) });
+          const i = tracks.findIndex(t => t.file === file), t = tracks[i];
+          if (!t) continue;
+          const row = list.querySelector(`.row[data-i="${i}"]`);
+          for (const [f, name] of [["key", "Key"], ["bpm", "BPM"]]) {
+            const box = row.querySelector(`[data-fld="${f}"]`);
+            if (t[f] || !a[f] || box.contains(document.activeElement)) continue;   // never overwrite the user
+            t[f] = a[f]; t.guess = [...(t.guess || []), f]; filled++;
+            box.classList.add("guess");
+            box.innerHTML = fieldIn(t, f, name);
+          }
+        } catch (e) { err = e.message; }
+      }
+      tools();
+      await save();
+      status(err || `Filled ${filled} — red values stay off the site until you confirm them`, !!err);
+      b.disabled = false;
+    });
+    $("confirmAll").addEventListener("click", async () => {
+      tracks.forEach(t => { t.guess = []; });
+      render(); await save();
+    });
 
     /* ---- publish ---- */
     $("publish").addEventListener("click", async () => {

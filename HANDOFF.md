@@ -34,7 +34,8 @@ _Last updated: 2026-11-23. Talk to the user in Russian, simply; site UI stays En
 - Vol. switch and Arrangements / Software / Sample packs menu, see CLAUDE.md. Software and sample packs are empty: waiting for the user's items (name, link).
 - Not tested: real long-press on a phone.
 
-- Auto-detecting BPM / key / genre of uploads (in the local admin): discussed only, waiting for the user's go-ahead, genre list.
+- Auto BPM/key detection in the admin: done, see CLAUDE.md. 31 guessed values in tracks.json await the user's confirmation. Auto genre: not started, needs the user's genre list.
+- Possibly wrong labels to check with the user: Velvet Skies says 116, analysis hears 106; Radiant Abyss 125 vs 123; Arcane Bm vs B.
 
 ## Future feature — "Sold" tracks (user request, NOT started; do after hosting is settled)
 - From the admin page (or, later, a "playlist edit mode" on his own profile page) the user can **mark a track as sold**.
