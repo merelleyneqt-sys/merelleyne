@@ -39,8 +39,8 @@ _Last updated: 2026-11-23. Talk to the user in Russian, simply; site UI stays En
 
 - License menu on + with prices (`?v=24`): published 2026-11-23. Old saved selections without a license are dropped.
 
-## 2026-11-23, `?v=25`: genre menu, lower search bar, request form — committed, NOT published
-- Form is tested with a fake server only. **Needs the Web3Forms access key** (`formKey` in settings.js): user agreed to register merelleynehq@gmail.com; the registration page (app.web3forms.com/onboarding/create) has a captcha, endless in the built-in browser — user should try Safari. Then send one real test. Key is public by design; 250 letters/month free; they store requests up to 3 years. Fallback: Formspree (50/month, needs code change). No own domain for now (user's choice); later: domain + mail service.
+## 2026-11-23, `?v=26`: genre menu, lower search bar, request form — committed, NOT published
+- Web3Forms key connected (user registered merelleynehq@gmail.com). Real test request from localhost accepted by the service (200, success); user has not yet confirmed the letter arrived. 250 letters/month free; requests stored up to 3 years. No own domain for now (user's choice).
 - Not tested: real long-press on a phone.
 
 ## Future feature — "Sold" tracks (user request, NOT started; do after hosting is settled)
