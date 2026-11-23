@@ -1,7 +1,7 @@
 // Site settings — edit freely. Leave a contact empty ("") to hide its button.
 window.SETTINGS = {
   contacts: {
-    telegram: "merelleyneqt",          // t.me/<this>
+    telegram: "merelleynehq",          // t.me/<this> — personal account (DM), not the channel
     instagram: "merelleynehq",         // instagram.com/<this>
     email: "merelleynehq@gmail.com",
   },
