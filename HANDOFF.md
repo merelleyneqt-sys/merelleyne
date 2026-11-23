@@ -43,6 +43,9 @@ _Last updated: 2026-11-23. Talk to the user in Russian, simply; site UI stays En
 - Web3Forms key connected (user registered merelleynehq@gmail.com). Real test request from localhost accepted by the service (200, success); the letter arrived but landed in Gmail Spam; told the user to mark "not spam" + add a filter for the sender; own domain is the lasting fix. 250 letters/month free; requests stored up to 3 years. No own domain for now (user's choice).
 - Not tested: real long-press on a phone.
 
+## To do — recorded 2026-11-23, NOT started (implement when told)
+1. **Double-click on the vinyl** plays a random track from ANY volume (not only the open one). The page should turn to that track's volume (our assumption). Avoid repeating the current track. Single click stays play/pause: a double click must not visibly toggle pause/play first (short wait ~220 ms before the single action, or undo it). Phones: double-tap; make sure it doesn't zoom (`touch-action: manipulation`). Ignore search / genre filter (our assumption: any track of all volumes; Software / Sample packs have no audio).
+
 ## Future feature — "Sold" tracks (user request, NOT started; do after hosting is settled)
 - From the admin page (or, later, a "playlist edit mode" on his own profile page) the user can **mark a track as sold**.
 - On the public site a sold track's **+ (add to selection / "cart") button turns grey and inactive**. Clicking it shows a message that **this track is already sold** (EN + RU texts in `i18n.js`, e.g. "This track is already sold" / "Этот трек уже продан").
