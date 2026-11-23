@@ -30,7 +30,7 @@ _Last updated: 2026-11-23. Talk to the user in Russian, simply; site UI stays En
 - **Right-click menu** on a track (long-press on phones): Play/Pause, Add/Remove selection, **Download tagged MP3 — Free** (downloads `audio/<file>` as `Merelleyne - Title (tagged).mp3`), Copy link (`site/#<file-slug>` → page scrolls to the track and loads it in the player, no autoplay). Toast "Link copied".
   - ⚠ The free download gives whatever is in `audio/` — for the 19 untagged test tracks that is the **full untagged version**.
 
-## 2026-11-23: volumes + sections (`?v=18`) — committed locally, NOT pushed/deployed (asked the user)
+## 2026-11-23: volumes + sections (`?v=19`) — committed locally, NOT pushed/deployed (asked the user)
 - Vol. switch and Arrangements / Software / Sample packs menu, see CLAUDE.md. Software and sample packs are empty: waiting for the user's items (name, link).
 - Not tested: real long-press on a phone.
 
